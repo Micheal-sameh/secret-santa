@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/create', [SessionController::class, 'create'])->name('sessions.create');
         Route::post('/', [SessionController::class, 'store'])->name('sessions.store');
         Route::get('/{session}', [SessionController::class, 'show'])->name('sessions.show');
+        Route::delete('/{session}/participants/{participant}', [SessionController::class, 'destroyParticipant'])->name('sessions.participants.destroy');
         Route::get('/{session}/secret-santa', [SessionController::class, 'secretSanta'])->name('sessions.secret-santa');
     });
 });
@@ -43,4 +44,6 @@ Route::middleware('auth')->group(function () {
 Route::prefix('santa')->group(function () {
     Route::get('/join', [SessionController::class, 'joinForm'])->name('session.join-form');
     Route::post('/join', [SessionController::class, 'join'])->name('session.join');
+    Route::get('/{session}/check-assignment', [SessionController::class, 'checkAssignment'])->name('sessions.check-assignment');
+    Route::post('/{session}/check-assignment', [SessionController::class, 'showAssignment'])->name('sessions.show-assignment');
 });
