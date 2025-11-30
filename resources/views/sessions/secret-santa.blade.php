@@ -66,6 +66,9 @@
                             <button onclick="window.print()" class="btn btn-primary">
                                 <i class="fas fa-print me-2"></i>Print Assignments
                             </button>
+                            <a href="{{ route('sessions.secret-santa.export-pdf', $session) }}" class="btn btn-success">
+                                <i class="fas fa-file-pdf me-2"></i>Export PDF
+                            </a>
                             <a href="{{ route('sessions.show', $session) }}" class="btn btn-outline-secondary">
                                 <i class="fas fa-arrow-left me-2"></i>Back to Session
                             </a>

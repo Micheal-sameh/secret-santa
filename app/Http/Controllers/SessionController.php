@@ -7,6 +7,7 @@ use App\Models\Assignment;
 use App\Models\Participant;
 use App\Models\Session;
 use Illuminate\Http\Request;
+use Mpdf\Mpdf;
 
 class SessionController extends Controller
 {
@@ -151,6 +152,42 @@ class SessionController extends Controller
         }
 
         return view('sessions.secret-santa', compact('session', 'assignments'));
+    }
+
+    public function exportSecretSantaPdf(Session $session)
+    {
+        // Ensure user owns this session
+        if ($session->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $session->load('participants');
+
+        // Check if session is active
+        if ($session->isActive()) {
+            abort(403, 'Assignments not yet generated.');
+        }
+
+        $assignments = Assignment::where('session_id', $session->id)
+            ->get()
+            ->map(function ($assignment) use ($session) {
+                $giver = $session->participants->find($assignment->giver_participant_id);
+                $recipient = $session->participants->find($assignment->recipient_participant_id);
+
+                return [
+                    'giver' => $giver,
+                    'recipient' => $recipient,
+                ];
+            })->toArray();
+
+        // Generate PDF
+        $mpdf = new Mpdf;
+        $mpdf->SetTitle('Secret Santa Assignments - '.$session->name);
+
+        $html = view('sessions.secret-santa-pdf', compact('session', 'assignments'))->render();
+        $mpdf->WriteHTML($html);
+
+        return $mpdf->Output('secret-santa-'.$session->name.'.pdf', 'D');
     }
 
     public function checkAssignment(Session $session)

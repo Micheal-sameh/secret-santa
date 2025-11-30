@@ -13,7 +13,7 @@
                     <div class="mb-4">
                         <p class="lead mb-3">Your Secret Santa assignment is:</p>
                         <div class="recipient-name">
-                            {{ $assignment->recipient->name }}
+                            <h3>{{ $assignment->recipient->name }} </h3>
                         </div>
                     </div>
 

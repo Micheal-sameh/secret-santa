@@ -38,6 +38,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/{session}', [SessionController::class, 'show'])->name('sessions.show');
         Route::delete('/{session}/participants/{participant}', [SessionController::class, 'destroyParticipant'])->name('sessions.participants.destroy');
         Route::get('/{session}/secret-santa', [SessionController::class, 'secretSanta'])->name('sessions.secret-santa');
+        Route::get('/{session}/secret-santa-pdf', [SessionController::class, 'exportSecretSantaPdf'])->name('sessions.secret-santa.export-pdf');
     });
 });
 
