@@ -112,21 +112,24 @@ class SessionController extends Controller
             abort(403);
         }
 
+        $session->load('participants');
+
         // Check if session is active
         if (! $session->isActive()) {
             $assignments = Assignment::where('session_id', $session->id)
-                ->with(['giver', 'recipient'])
                 ->get()
-                ->map(function ($assignment) {
+                ->map(function ($assignment) use ($session) {
+                    $giver = $session->participants->find($assignment->giver_participant_id);
+                    $recipient = $session->participants->find($assignment->recipient_participant_id);
+
                     return [
-                        'giver' => $assignment->giver,
-                        'recipient' => $assignment->recipient,
+                        'giver' => $giver,
+                        'recipient' => $recipient,
                     ];
                 })->toArray();
 
             return view('sessions.secret-santa', compact('session', 'assignments'));
         }
-        $session->load('participants');
         $participants = $session->participants;
 
         if ($participants->count() < 2) {
