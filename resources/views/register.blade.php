@@ -202,12 +202,141 @@
             color: rgba(255, 255, 255, 0.7);
             font-size: 0.9rem;
         }
+
+        .christmas-tree {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 80px;
+            height: 100px;
+        }
+
+        .tree-trunk {
+            position: absolute;
+            bottom: 0;
+            left: 35px;
+            width: 10px;
+            height: 20px;
+            background: #8B4513;
+            border-radius: 2px;
+        }
+
+        .tree-level {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 25px solid transparent;
+            border-right: 25px solid transparent;
+            border-bottom: 40px solid var(--santa-green);
+        }
+
+        .tree-level-1 {
+            bottom: 20px;
+            left: 15px;
+        }
+
+        .tree-level-2 {
+            bottom: 45px;
+            left: 15px;
+            border-bottom-color: #0a7e3a;
+        }
+
+        .tree-level-3 {
+            bottom: 70px;
+            left: 15px;
+            border-bottom-color: #0a6e32;
+        }
+
+        .ornament {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--santa-red);
+            z-index: 1;
+            animation: twinkle 2s infinite alternate;
+        }
+
+        .ornament-1 {
+            top: 10px;
+            left: 35px;
+            animation-delay: 0s;
+        }
+
+        .ornament-2 {
+            top: 25px;
+            left: 20px;
+            background: var(--santa-gold);
+            animation-delay: 0.5s;
+        }
+
+        .ornament-3 {
+            top: 25px;
+            left: 50px;
+            background: var(--santa-gold);
+            animation-delay: 1s;
+        }
+
+        .ornament-4 {
+            top: 45px;
+            left: 30px;
+            animation-delay: 0.3s;
+        }
+
+        .ornament-5 {
+            top: 45px;
+            left: 45px;
+            animation-delay: 0.8s;
+        }
+
+        .ornament-6 {
+            top: 60px;
+            left: 35px;
+            background: var(--santa-gold);
+            animation-delay: 1.2s;
+        }
+
+        .star {
+            position: absolute;
+            top: 5px;
+            left: 35px;
+            color: var(--santa-gold);
+            font-size: 12px;
+            z-index: 1;
+            animation: spin 4s linear infinite;
+            text-shadow: 0 0 8px var(--santa-gold);
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.3; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1.1); }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 
 <body>
     <!-- Snowflakes -->
     <div id="snowflakes"></div>
+
+    <!-- Christmas Tree -->
+    <div class="christmas-tree">
+        <div class="tree-level tree-level-3"></div>
+        <div class="tree-level tree-level-2"></div>
+        <div class="tree-level tree-level-1"></div>
+        <div class="tree-trunk"></div>
+        <div class="ornament ornament-1"></div>
+        <div class="ornament ornament-2"></div>
+        <div class="ornament ornament-3"></div>
+        <div class="ornament ornament-4"></div>
+        <div class="ornament ornament-5"></div>
+        <div class="ornament ornament-6"></div>
+        <div class="star">★</div>
+    </div>
 
     <div class="container mt-5">
         <div class="row justify-content-center">
