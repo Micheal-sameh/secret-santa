@@ -22,12 +22,13 @@
                         <p class="mb-0">Remember to keep your assignment a secret until the gift exchange. Don't tell
                             anyone who you're buying for!</p>
                     </div>
-
-                    <div class="mt-4">
-                        <a href="{{ route('sessions.show', $session) }}" class="btn btn-primary">
-                            <i class="fas fa-arrow-left me-2"></i>Back to Session
-                        </a>
-                    </div>
+                    @auth
+                        <div class="mt-4">
+                            <a href="{{ route('sessions.show', $session) }}" class="btn btn-primary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Session
+                            </a>
+                        </div>
+                    @endauth
                 </div>
             </div>
         </div>

@@ -17,12 +17,12 @@
 
         body {
             background: linear-gradient(135deg, var(--santa-dark) 0%, #16213e 100%);
-            min-height: 99vh;
+            min-height: 98vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: #fff;
             position: relative;
             overflow-x: hidden;
-            overflow-y: auto;
+            overflow-y: hidden;
         }
 
         html {
