@@ -114,7 +114,17 @@ class SessionController extends Controller
 
         // Check if session is active
         if (! $session->isActive()) {
-            return back()->withErrors(['session' => 'This session is no longer active.']);
+            $assignments = Assignment::where('session_id', $session->id)
+                ->with(['giver', 'recipient'])
+                ->get()
+                ->map(function ($assignment) {
+                    return [
+                        'giver' => $assignment->giver,
+                        'recipient' => $assignment->recipient,
+                    ];
+                })->toArray();
+
+            return view('sessions.secret-santa', compact('session', 'assignments'));
         }
         $session->load('participants');
         $participants = $session->participants;
