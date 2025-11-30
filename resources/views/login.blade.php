@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -309,6 +310,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Snowflakes -->
     <div id="snowflakes"></div>
@@ -338,16 +340,16 @@
                         <p class="mb-0 mt-2">Welcome back to the gift exchange!</p>
                     </div>
                     <div class="card-body">
-                        @if(session('success'))
+                        @if (session('success'))
                             <div class="alert alert-success">
                                 {{ session('success') }}
                             </div>
                         @endif
 
-                        @if($errors->any())
+                        @if ($errors->any())
                             <div class="alert alert-danger">
                                 <ul class="mb-0">
-                                    @foreach($errors->all() as $error)
+                                    @foreach ($errors->all() as $error)
                                         <li>{{ $error }}</li>
                                     @endforeach
                                 </ul>
@@ -359,19 +361,22 @@
 
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}" required placeholder="Enter your email">
+                                <input type="email" class="form-control" id="email" name="email"
+                                    value="{{ old('email') }}" required placeholder="Enter your email">
                             </div>
 
                             <div class="mb-3">
                                 <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" required placeholder="Enter your password">
+                                <input type="password" class="form-control" id="password" name="password" required
+                                    placeholder="Enter your password">
                             </div>
 
                             <button type="submit" class="btn btn-primary">Unwrap Your Gifts</button>
                         </form>
 
                         <div class="footer-text">
-                            <p>Don't have an account? <a href="{{ route('register') }}">Join the Secret Santa fun!</a></p>
+                            <p>Don't have an account? <a href="{{ route('register') }}">Join the Secret Santa fun!</a>
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -410,4 +415,5 @@
         document.addEventListener('DOMContentLoaded', createSnowflakes);
     </script>
 </body>
+
 </html>
