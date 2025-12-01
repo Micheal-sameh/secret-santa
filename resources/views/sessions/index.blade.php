@@ -625,6 +625,11 @@
                                             @endif
                                         </div>
 
+                                        <div class="text-center mb-2">
+                                            <small class="text-muted d-block mb-1">Scan QR code:</small>
+                                            <img src="{{ route('sessions.qr-code', $session) }}" alt="QR Code" style="max-width: 80px; height: auto; border: 1px solid #dee2e6; border-radius: 4px; padding: 4px;">
+                                        </div>
+
                                         <p class="text-muted mb-0 small">
                                             <i class="fas fa-calendar-alt me-1"></i>
                                             Created {{ $session->created_at->format('M j, Y') }}

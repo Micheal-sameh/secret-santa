@@ -8,12 +8,13 @@ use App\Models\Participant;
 use App\Models\Session;
 use Illuminate\Http\Request;
 use Mpdf\Mpdf;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class SessionController extends Controller
 {
     public function index()
     {
-        $sessions = auth()->user()->sessions()->with('participants')->withcount('participants')->get();
+        $sessions = auth()->user()->sessions()->with('participants')->withCount('participants')->get();
 
         return view('sessions.index', compact('sessions'));
     }
@@ -189,6 +190,18 @@ class SessionController extends Controller
         $mpdf->WriteHTML($html);
 
         return $mpdf->Output('secret-santa-'.$session->name.'.pdf', 'D');
+    }
+
+    public function generateQrCode(Session $session)
+    {
+        // Ensure user owns this session
+        if ($session->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $qrCode = QrCode::size(200)->generate($session->shareable_link);
+
+        return response($qrCode)->header('Content-Type', 'image/svg+xml');
     }
 
     public function checkAssignment(Session $session)

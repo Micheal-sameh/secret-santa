@@ -412,6 +412,10 @@
                                     <p class="text-muted small mb-0">
                                         Share this link to invite others to your Secret Santa
                                     </p>
+                                    <div class="text-center mt-3">
+                                        <small class="text-muted d-block mb-2">Or scan this QR code:</small>
+                                        <img src="{{ route('sessions.qr-code', $session) }}" alt="QR Code" style="max-width: 150px; height: auto; border: 1px solid #dee2e6; border-radius: 8px; padding: 8px;">
+                                    </div>
                                 </div>
                             </div>
                         </div>

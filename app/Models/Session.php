@@ -23,6 +23,10 @@ class Session extends Model
         'expires_at' => 'datetime',
     ];
 
+    protected $mediaAttribute = [
+        'qrcode' => 'image',
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
