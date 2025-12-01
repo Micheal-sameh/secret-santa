@@ -9,7 +9,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-10">
-                <div class="card">
+                <div class="card mt-3">
                     <div class="card-header">
                         <h3><span class="gift-icon"></span>Secret Santa Assignments</h3>
                         <p class="mb-0 mt-2">{{ $session->name }}</p>
@@ -41,7 +41,7 @@
                             </ul>
                         </div>
 
-                        <div class="row">
+                        <div class="row mt-4">
                             @foreach ($assignments as $assignment)
                                 <div class="col-md-6 col-lg-4 mb-4">
                                     <div class="assignment-card">
