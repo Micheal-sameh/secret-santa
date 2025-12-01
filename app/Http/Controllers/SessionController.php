@@ -13,7 +13,7 @@ class SessionController extends Controller
 {
     public function index()
     {
-        $sessions = auth()->user()->sessions()->with('participants')->get();
+        $sessions = auth()->user()->sessions()->with('participants')->withcount('participants')->get();
 
         return view('sessions.index', compact('sessions'));
     }
@@ -84,8 +84,9 @@ class SessionController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect()->route('sessions.show', $session)
-            ->with('success', 'Successfully joined the session!');
+        return auth()->check() ? redirect()->route('sessions.show', $session)
+            ->with('success', 'Successfully joined the session!')
+            : to_route('sessions.check-assignment', $session)->with('success', 'Successfully joined the session!');
     }
 
     public function destroyParticipant(Session $session, Participant $participant)

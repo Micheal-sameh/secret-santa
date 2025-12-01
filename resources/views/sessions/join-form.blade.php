@@ -120,8 +120,8 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
+        <div class="col-md-4">
+            <div class="card mt-4">
                 <div class="card-header position-relative">
                     <div class="santa-hat"></div>
                     <h3><span class="gift-icon"></span>Join Secret Santa Session</h3>
@@ -139,8 +139,8 @@
                     @endif
 
                     <div class="text-center mb-4">
-                        <div class="join-icon">
-                            <i class="fas fa-user-plus"></i>
+                        <div class="">
+                            <i class="gift-icon"></i>
                         </div>
                         <p class="text-muted">Get ready for some festive gift-giving fun!</p>
                     </div>
@@ -166,7 +166,7 @@
                                 <i class="fas fa-gift me-2"></i>Join Session
                             </button>
                             <a href="{{ route('sessions.index') }}" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left me-2"></i>Cancel
+                                Cancel
                             </a>
                         </div>
                     </form>

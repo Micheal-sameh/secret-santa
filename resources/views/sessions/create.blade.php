@@ -161,7 +161,7 @@
 
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-md-6">
             <div class="card">
                 <div class="card-header position-relative">
                     <div class="santa-hat"></div>
