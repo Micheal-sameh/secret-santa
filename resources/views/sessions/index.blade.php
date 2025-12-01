@@ -605,9 +605,9 @@
                                     </div>
                                     <div class="session-body">
                                         <div class="mb-3">
-                                            <div class="session-code" onclick="copyToClipboard('{{ $session->code }}')">
+                                            <div class="session-code" onclick="copyToClipboard('{{ $session->shareable_link }}', 'Shareable link copied to clipboard!')">
                                                 {{ $session->code }}
-                                                <span class="copy-tooltip">Click to copy</span>
+                                                <span class="copy-tooltip">Click to copy link</span>
                                             </div>
                                         </div>
 
@@ -627,7 +627,7 @@
 
                                         <div class="text-center mb-2">
                                             <small class="text-muted d-block mb-1">Scan QR code:</small>
-                                            <img src="{{ route('sessions.qr-code', $session) }}" alt="QR Code" style="max-width: 80px; height: auto; border: 1px solid #dee2e6; border-radius: 4px; padding: 4px;">
+                                            <img src="{{ route('sessions.qr-code', $session) }}" alt="QR Code" style="max-width: 80px; height: auto; border: 1px solid #dee2e6; border-radius: 4px; padding: 4px; cursor: pointer;" onclick="copyToClipboard('{{ $session->shareable_link }}', 'Shareable link copied to clipboard!')" title="Click to copy shareable link">
                                         </div>
 
                                         <p class="text-muted mb-0 small">
@@ -691,6 +691,31 @@
 
 @push('scripts')
 <script>
+    // Copy to clipboard function (global scope)
+    function copyToClipboard(text, message = 'Copied to clipboard!') {
+        console.log('Copying text:', text);
+        navigator.clipboard.writeText(text).then(() => {
+            console.log('Successfully copied:', text);
+            showToast(message);
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+            showToast('Failed to copy');
+        });
+    }
+
+    // Toast notification function (global scope)
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+
+        toastMessage.textContent = message;
+        toast.classList.add('show');
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         // Create snowflakes
         function createSnowflakes() {
@@ -719,36 +744,7 @@
             }
         }
 
-        // Copy to clipboard function
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                showToast('Session code copied to clipboard!');
-            }).catch(err => {
-                console.error('Failed to copy: ', err);
-                showToast('Failed to copy code');
-            });
-        }
 
-        // Toast notification
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            const toastMessage = document.getElementById('toast-message');
-
-            toastMessage.textContent = message;
-            toast.classList.add('show');
-
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-
-        // Add click handlers to all session codes
-        document.querySelectorAll('.session-code').forEach(code => {
-            code.addEventListener('click', function(e) {
-                const sessionCode = this.textContent.trim();
-                copyToClipboard(sessionCode);
-            });
-        });
 
         // Add hover effects to session cards
         const sessionCards = document.querySelectorAll('.session-card');
