@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ForgetPasswordController;
 use App\Http\Controllers\SessionController;
 use Illuminate\Support\Facades\Route;
 
@@ -47,4 +48,11 @@ Route::prefix('santa')->group(function () {
     Route::post('/join', [SessionController::class, 'join'])->name('session.join');
     Route::get('/{session}/check-assignment', [SessionController::class, 'checkAssignment'])->name('sessions.check-assignment');
     Route::post('/{session}/check-assignment', [SessionController::class, 'showAssignment'])->name('sessions.show-assignment');
+});
+
+Route::prefix('paswword')->group(function () {
+    Route::get('/forgot-password', [ForgetPasswordController::class, 'showForgetPasswordForm'])->name('password.request');
+    Route::post('/forgot-password', [ForgetPasswordController::class, 'sendResetLink'])->name('password.email');
+    Route::get('/reset-password/{token}', [ForgetPasswordController::class, 'showResetPasswordForm'])->name('password.reset');
+    Route::post('/reset-password', [ForgetPasswordController::class, 'resetPassword'])->name('password.update');
 });

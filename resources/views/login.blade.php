@@ -50,6 +50,7 @@
                     <div class="footer-text">
                         <p>Don't have an account? <a href="{{ route('register') }}">Join the Secret Santa fun!</a>
                         </p>
+                        <p><a href="{{ route('password.request') }}">Forgot Password?</a></p>
                     </div>
                 </div>
             </div>
