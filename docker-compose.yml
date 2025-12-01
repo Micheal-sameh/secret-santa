@@ -1,4 +1,3 @@
-version: "3.7"
 services:
   app:
     build:
@@ -13,28 +12,30 @@ services:
     volumes:
       - ./:/var/www/santa
       - ./docker/php/custom.ini:/usr/local/etc/php/conf.d/custom.ini
+    ports:
+      - 1500:9000
     networks:
       - santa
       - external_db_network
     depends_on:
       - db
 
-  nginx:
-    container_name: reservation-test-nginx
-    restart: unless-stopped
-    image: nginx
-    ports:
-      - 1600:80
-    depends_on:
-      - app
-    volumes:
-      - ./:/var/www/santa
-      - ./docker/nginx/conf.d/:/etc/nginx/conf.d
-    networks:
-      - santa
+  # nginx:
+  #   container_name: santa-nginx
+  #   restart: unless-stopped
+  #   image: nginx
+  #   ports:
+  #     - 1600:80
+  #   depends_on:
+  #     - app
+  #   volumes:
+  #     - ./:/var/www/santa
+  #     - ./docker/nginx/conf.d/:/etc/nginx/conf.d
+  #   networks:
+  #     - santa
   db:
     image: mariadb:10.5
-    container_name: reservation-test-db
+    container_name: santa-db
     restart: unless-stopped
     command: --max_allowed_packet=67108864
     environment:
@@ -45,14 +46,14 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
     ports:
-      - "1601:3306"
+      - "1501:3306"
     networks:
       - santa
       - external_db_network
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: santa-db
+    container_name: santa-phpmyadmin
     restart: unless-stopped
     environment:
       PMA_HOST: db  # Points to the db service
@@ -60,7 +61,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       UPLOAD_LIMIT: 256M
     ports:
-      - "1602:80"
+      - "1502:80"
     networks:
       - santa
 
