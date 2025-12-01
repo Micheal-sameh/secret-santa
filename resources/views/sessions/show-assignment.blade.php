@@ -29,6 +29,20 @@
                             </a>
                         </div>
                     @endauth
+                    @guest
+                    <div class="text-center mt-4">
+                        <div class="alert alert-info">
+                            <i class="fas fa-lightbulb me-2"></i>
+                            <strong>Want to create your own Secret Santa group?</strong>
+                        </div>
+                        <a href="{{ route('register') }}" class="btn btn-success btn-lg">
+                            <i class="fas fa-plus-circle me-2"></i>Create Your Secret Santa Group Now
+                        </a>
+                        <p class="text-muted mt-2 small">
+                            Join our community and start organizing gift exchanges with friends and family!
+                        </p>
+                    </div>
+                    @endguest
                 </div>
             </div>
         </div>
