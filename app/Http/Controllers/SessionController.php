@@ -85,7 +85,7 @@ class SessionController extends Controller
             'name' => $request->name,
         ]);
 
-        return auth()->check() ? redirect()->route('sessions.show', $session)
+        return (auth()->check() && auth()->id() == $session->user_id) ? redirect()->route('sessions.show', $session)
             ->with('success', 'Successfully joined the session!')
             : to_route('sessions.check-assignment', $session)->with('success', 'Successfully joined the session!');
     }
