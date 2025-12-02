@@ -118,10 +118,10 @@
 @endpush
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
+<div class="container d-flex align-items-center min-vh-100">
+    <div class="row justify-content-center w-100">
         <div class="col-md-4">
-            <div class="card mt-4">
+            <div class="card">
                 <div class="card-header position-relative">
                     <div class="santa-hat"></div>
                     <h3><span class="gift-icon"></span>Join Secret Santa Session</h3>
