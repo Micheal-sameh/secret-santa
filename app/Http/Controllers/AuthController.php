@@ -4,13 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
-use App\Models\User;
+use App\Services\AuthService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    public function __construct(protected AuthService $authService) {}
+
     public function showRegister()
     {
         return view('register');
@@ -18,11 +18,7 @@ class AuthController extends Controller
 
     public function register(RegisterRequest $request)
     {
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        $this->authService->register($request->only(['name', 'email', 'password']));
 
         return redirect('/')->with('success', 'Registration successful!');
     }
@@ -36,8 +32,9 @@ class AuthController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials)) {
+        if ($this->authService->login($credentials)) {
             $request->session()->regenerate();
+
             return redirect()->intended('/')->with('success', 'Login successful!');
         }
 
@@ -48,9 +45,10 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        Auth::logout();
+        $this->authService->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return redirect('/')->with('success', 'Logged out successfully!');
     }
 }
