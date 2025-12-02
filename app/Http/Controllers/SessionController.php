@@ -14,7 +14,8 @@ class SessionController extends Controller
 {
     public function index()
     {
-        $sessions = auth()->user()->sessions()->with('participants')->withCount('participants')->get();
+        $sessions = auth()->user()->sessions()->with('participants')->withCount('participants')
+            ->orderBy('status')->orderBy('expires_at')->get();
 
         return view('sessions.index', compact('sessions'));
     }
