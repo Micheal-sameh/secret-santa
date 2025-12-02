@@ -22,7 +22,7 @@
             color: #fff;
             position: relative;
             overflow-x: hidden;
-            overflow-y: hidden;
+            overflow-y: auto;
         }
 
         html {
