@@ -90,6 +90,11 @@ class SessionService
         })->toArray();
     }
 
+    public function getAssignmentsApi(Session $session)
+    {
+        return $this->assignmentRepository->getBySession($session->id)->load(['giver', 'recipient']);
+    }
+
     public function getAssignmentForParticipant(Session $session, string $participantName)
     {
         $participant = $this->participantRepository->findBySessionAndName($session->id, $participantName);

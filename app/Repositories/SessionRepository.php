@@ -25,7 +25,7 @@ class SessionRepository
 
     public function getByUserId(int $userId)
     {
-        return $this->model->where('user_id', $userId)->get();
+        return $this->model->where('user_id', $userId)->withCount('participants')->with('participants')->get();
     }
 
     public function update(Session $session, array $data)
