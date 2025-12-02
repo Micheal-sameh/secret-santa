@@ -3,19 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\JoinSessionRequest;
-use App\Models\Assignment;
 use App\Models\Participant;
 use App\Models\Session;
+use App\Services\SessionService;
 use Illuminate\Http\Request;
 use Mpdf\Mpdf;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class SessionController extends Controller
 {
+    public function __construct(protected SessionService $sessionService) {}
+
     public function index()
     {
-        $sessions = auth()->user()->sessions()->with('participants')->withCount('participants')
-            ->orderBy('status')->orderBy('expires_at')->get();
+        $sessions = $this->sessionService->getUserSessions(auth()->id());
 
         return view('sessions.index', compact('sessions'));
     }
@@ -33,11 +34,9 @@ class SessionController extends Controller
             'expires_at' => 'nullable|date|after:now',
         ]);
 
-        $session = Session::create([
+        $session = $this->sessionService->createSession([
             'user_id' => auth()->id(),
             'name' => $request->name,
-            'code' => Session::generateUniqueCode(),
-            'status' => 1, // Active
             'expires_at' => $request->expires_at,
         ]);
 
@@ -59,7 +58,7 @@ class SessionController extends Controller
 
     public function joinForm(Request $request)
     {
-        $session = Session::where('code', $request->code)->first();
+        $session = $this->sessionService->getSessionByCode($request->code);
         if ($session == null) {
             return to_route('login')->withErrors(['code' => 'This session is no longer exsits']);
         }
@@ -73,7 +72,7 @@ class SessionController extends Controller
 
     public function join(JoinSessionRequest $request)
     {
-        $session = Session::where('code', $request->code)->first();
+        $session = $this->sessionService->getSessionByCode($request->code);
 
         // Check if session is active
         if (! $session->isActive()) {
@@ -81,7 +80,7 @@ class SessionController extends Controller
         }
 
         // Create participant record
-        Participant::create([
+        $this->sessionService->joinSession([
             'session_id' => $session->id,
             'name' => $request->name,
         ]);
@@ -103,7 +102,7 @@ class SessionController extends Controller
             abort(404);
         }
 
-        $participant->delete();
+        $this->sessionService->removeParticipant($participant);
 
         return redirect()->route('sessions.show', $session)
             ->with('success', 'Participant removed successfully!');
@@ -120,17 +119,7 @@ class SessionController extends Controller
 
         // Check if session is active
         if (! $session->isActive()) {
-            $assignments = Assignment::where('session_id', $session->id)
-                ->get()
-                ->map(function ($assignment) use ($session) {
-                    $giver = $session->participants->find($assignment->giver_participant_id);
-                    $recipient = $session->participants->find($assignment->recipient_participant_id);
-
-                    return [
-                        'giver' => $giver,
-                        'recipient' => $recipient,
-                    ];
-                })->toArray();
+            $assignments = $this->sessionService->getAssignments($session);
 
             return view('sessions.secret-santa', compact('session', 'assignments'));
         }
@@ -140,18 +129,9 @@ class SessionController extends Controller
             return back()->withErrors(['participants' => 'Need at least 2 participants for Secret Santa.']);
         }
 
-        $assignments = $this->generateSecretSantaAssignments($participants, $session);
+        $assignments = $this->sessionService->generateAssignments($session, $participants);
         if (empty($assignments)) {
             return back()->withErrors(['assignments' => 'Failed to generate valid assignments. Please try again.']);
-        }
-        $session->update(['status' => 2]); // Update session status to indicate assignments generated
-        // Save assignments to database
-        foreach ($assignments as $assignment) {
-            Assignment::create([
-                'session_id' => $session->id,
-                'giver_participant_id' => $assignment['giver']['id'],
-                'recipient_participant_id' => $assignment['recipient']['id'],
-            ]);
         }
 
         return view('sessions.secret-santa', compact('session', 'assignments'));
@@ -171,17 +151,7 @@ class SessionController extends Controller
             abort(403, 'Assignments not yet generated.');
         }
 
-        $assignments = Assignment::where('session_id', $session->id)
-            ->get()
-            ->map(function ($assignment) use ($session) {
-                $giver = $session->participants->find($assignment->giver_participant_id);
-                $recipient = $session->participants->find($assignment->recipient_participant_id);
-
-                return [
-                    'giver' => $giver,
-                    'recipient' => $recipient,
-                ];
-            })->toArray();
+        $assignments = $this->sessionService->getAssignments($session);
 
         // Generate PDF
         $mpdf = new Mpdf;
@@ -226,82 +196,15 @@ class SessionController extends Controller
             'participant_name' => 'required|string|max:255',
         ]);
 
-        // Find the participant by name
-        $participant = $session->participants()->where('name', $request->participant_name)->first();
-
-        if (! $participant) {
-            return back()->withErrors(['participant_name' => 'Participant not found. Please check your name spelling.']);
-        }
-
         // Find the assignment for this participant
-        $assignment = Assignment::where('session_id', $session->id)
-            ->where('giver_participant_id', $participant->id)
-            ->with('recipient')
-            ->first();
+        $assignment = $this->sessionService->getAssignmentForParticipant($session, $request->participant_name);
 
         if (! $assignment) {
             return back()->withErrors(['participant_name' => 'No assignment found for this participant. Assignments may not have been generated yet.']);
         }
 
+        $participant = $assignment->giver;
+
         return view('sessions.show-assignment', compact('session', 'participant', 'assignment'));
-    }
-
-    private function generateSecretSantaAssignments(\Illuminate\Support\Collection $participants, $session): array
-    {
-        // 1. Extract IDs for Givers (unshuffled) and Recipients (to be shuffled)
-        $giverIds = $participants->pluck('id')->toArray();
-        $recipientIds = $giverIds;
-
-        $assignments = [];
-        $maxAttempts = count($giverIds) * 2; // Limit attempts to prevent infinite loops
-
-        // We must ensure the number of givers and recipients is the same and > 1
-        if (count($giverIds) < 2) {
-            // Handle case for 0 or 1 participant
-            return [];
-        }
-
-        // Use a loop that attempts the assignment until a valid derangement is found
-        for ($attempt = 0; $attempt < $maxAttempts; $attempt++) {
-            // Shuffle the recipient list for each attempt
-            shuffle($recipientIds);
-            $isValid = true;
-            $tempAssignments = [];
-
-            // 2. Iterate through the givers and assign the shuffled recipient
-            for ($i = 0; $i < count($giverIds); $i++) {
-                $giverId = $giverIds[$i];
-                $recipientId = $recipientIds[$i];
-
-                // 3. Check for the "self-gifting" constraint
-                if ($giverId == $recipientId) {
-                    $isValid = false;
-                    break; // Invalid assignment, try shuffling again
-                }
-
-                // Store the ID pair temporarily
-                $tempAssignments[] = [
-                    'giver_id' => $giverId,
-                    'recipient_id' => $recipientId,
-                ];
-            }
-
-            // 4. If a valid assignment (derangement) is found, finalize the assignment objects and return
-            if ($isValid) {
-                foreach ($tempAssignments as $pair) {
-                    $giver = $participants->firstWhere('id', $pair['giver_id']);
-                    $recipient = $participants->firstWhere('id', $pair['recipient_id']);
-
-                    $assignments[] = [
-                        'giver' => $giver,
-                        'recipient' => $recipient,
-                    ];
-                }
-
-                return $assignments;
-            }
-        }
-
-        return [];
     }
 }
