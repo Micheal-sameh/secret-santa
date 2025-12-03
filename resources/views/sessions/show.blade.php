@@ -123,7 +123,7 @@
                                     <h5><i class="fas fa-share-alt me-2"></i>Share Session</h5>
                                     <div class="mb-3">
                                         <div class="input-group">
-                                            <input type="text" class="form-control share-input" id="shareLink" value="{{ $session->shareable_link }}" readonly>
+                                            <input type="text" class="form-control share-input" id="shareLink" value="{{ $session->shareable_link }}" readonly data-user-name="{{ $session->user->name }}" data-session-name="{{ $session->name }}">
                                             <button class="btn btn-outline-secondary copy-btn" type="button" id="copyButton" onclick="copyToClipboard()">
                                                 <i class="fas fa-copy"></i>
                                             </button>
@@ -302,10 +302,17 @@
 
     function copyToClipboard() {
         const shareLink = document.getElementById('shareLink');
-        shareLink.select();
-        shareLink.setSelectionRange(0, 99999);
+        const userName = shareLink.getAttribute('data-user-name');
+        const sessionName = shareLink.getAttribute('data-session-name');
+        const link = shareLink.value;
 
-        navigator.clipboard.writeText(shareLink.value).then(function() {
+        const message = `${userName} invites you to join Secret Santa 🎅 of ${sessionName} with Link:
+${link}
+
+Merry Christmas,
+Tekando🎄.`;
+
+        navigator.clipboard.writeText(message).then(function() {
             const button = document.getElementById('copyButton');
             const originalHTML = button.innerHTML;
             button.innerHTML = '<i class="fas fa-check"></i>';
@@ -319,7 +326,12 @@
             }, 2000);
         }).catch(function(err) {
             console.error('Failed to copy: ', err);
+            // Fallback for older browsers
+            shareLink.value = message;
+            shareLink.select();
+            shareLink.setSelectionRange(0, 99999);
             document.execCommand('copy');
+            shareLink.value = link; // Reset to original value
         });
     }
 

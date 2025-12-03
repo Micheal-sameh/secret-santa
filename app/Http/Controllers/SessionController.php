@@ -51,7 +51,7 @@ class SessionController extends Controller
             abort(403);
         }
 
-        $session->load('participants');
+        $session->load('participants', 'user');
 
         return view('sessions.show', compact('session'));
     }
