@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Models\User;
 use App\Services\AuthService;
 use Illuminate\Http\Request;
+use Laravel\Socialite\Socialite;
 
 class AuthController extends Controller
 {
@@ -50,5 +52,43 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/')->with('success', 'Logged out successfully!');
+    }
+
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->redirect();
+    }
+
+    public function handleGoogleCallback()
+    {
+        try {
+            $googleUser = Socialite::driver('google')->user();
+
+            $user = User::where('google_id', $googleUser->id)->first();
+
+            if (! $user) {
+                // Check if user exists with same email
+                $user = User::where('email', $googleUser->email)->first();
+
+                if ($user) {
+                    // Link Google account to existing user
+                    $user->update(['google_id' => $googleUser->id]);
+                } else {
+                    // Create new user
+                    $user = User::create([
+                        'name' => $googleUser->name,
+                        'email' => $googleUser->email,
+                        'google_id' => $googleUser->id,
+                        'password' => bcrypt(uniqid()), // Random password for Google users
+                    ]);
+                }
+            }
+
+            Auth::login($user);
+
+            return redirect('/')->with('success', 'Login successful!');
+        } catch (\Exception $e) {
+            return redirect('/auth/login')->withErrors(['google' => 'Google authentication failed.']);
+        }
     }
 }

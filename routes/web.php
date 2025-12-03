@@ -28,6 +28,10 @@ Route::prefix('auth')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
+
+    // Google Authentication Routes
+    Route::get('/google', [AuthController::class, 'redirectToGoogle'])->name('auth.google');
+    Route::get('/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 });
 
 Route::middleware('auth')->group(function () {
