@@ -605,7 +605,7 @@
                                     </div>
                                     <div class="session-body">
                                         <div class="mb-3">
-                                            <div class="session-code" onclick="copyToClipboard('{{ $session->shareable_link }}', 'Shareable link copied to clipboard!')">
+                                            <div class="session-code" onclick="copyToClipboard('{{ $session->shareable_link }}', '{{ $session->user->name }}', '{{ $session->name }}')">
                                                 {{ $session->code }}
                                                 <span class="copy-tooltip">Click to copy link</span>
                                             </div>
@@ -627,7 +627,7 @@
 
                                         <div class="text-center mb-2">
                                             <small class="text-muted d-block mb-1">Scan QR code:</small>
-                                            <img src="{{ route('sessions.qr-code', $session) }}" alt="QR Code" style="max-width: 80px; height: auto; border: 1px solid #dee2e6; border-radius: 4px; padding: 4px; cursor: pointer;" onclick="copyToClipboard('{{ $session->shareable_link }}', 'Shareable link copied to clipboard!')" title="Click to copy shareable link">
+                                            <img src="{{ route('sessions.qr-code', $session) }}" alt="QR Code" style="max-width: 80px; height: auto; border: 1px solid #dee2e6; border-radius: 4px; padding: 4px; cursor: pointer;" onclick="copyToClipboard('{{ $session->shareable_link }}', '{{ $session->user->name }}', '{{ $session->name }}')" title="Click to copy invitation message">
                                         </div>
 
                                         <p class="text-muted mb-0 small">
@@ -692,11 +692,16 @@
 @push('scripts')
 <script>
     // Copy to clipboard function (global scope)
-    function copyToClipboard(text, message = 'Copied to clipboard!') {
-        console.log('Copying text:', text);
-        navigator.clipboard.writeText(text).then(() => {
-            console.log('Successfully copied:', text);
-            showToast(message);
+    function copyToClipboard(link, userName, sessionName) {
+        const message = `${userName} invites you to join Secret Santa 🎅 of ${sessionName} with Link:
+${link}
+
+Merry Christmas,
+Tekando 🎄.`;
+        console.log('Copying message:', message);
+        navigator.clipboard.writeText(message).then(() => {
+            console.log('Successfully copied:', message);
+            showToast('Invitation message copied to clipboard!');
         }).catch(err => {
             console.error('Failed to copy: ', err);
             showToast('Failed to copy');
