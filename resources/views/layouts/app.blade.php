@@ -23,6 +23,7 @@
             position: relative;
             overflow-x: hidden;
             overflow-y: auto;
+            padding-bottom: 80px;
         }
 
         html {
@@ -215,6 +216,7 @@
             left: 20px;
             width: 80px;
             height: 100px;
+            z-index: 1001;
         }
 
         .tree-trunk {
@@ -383,6 +385,69 @@
                 padding-right: 15px;
             }
         }
+
+        /* Powered by Tekando Footer Styling */
+        .powered-by-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, var(--santa-dark) 0%, #16213e 100%);
+            backdrop-filter: blur(10px);
+            border-top: 2px solid var(--santa-red);
+            padding: 1rem 0;
+            z-index: 1000;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .powered-by-footer .container {
+            padding: 0 1rem;
+        }
+
+        .powered-by-footer p {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #fff;
+            text-align: center;
+        }
+
+        .powered-by-footer small {
+            font-size: 0.9rem;
+        }
+
+        .tekando-link {
+            color: var(--santa-gold);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tekando-link:hover {
+            color: var(--santa-green);
+            border-bottom-color: var(--santa-green);
+            text-decoration: none;
+        }
+
+        /* Mobile footer adjustments */
+        @media (max-width: 768px) {
+            .powered-by-footer {
+                padding: 0.75rem 0;
+            }
+
+            .powered-by-footer p {
+                font-size: 0.9rem;
+            }
+
+            .powered-by-footer small {
+                font-size: 0.8rem;
+            }
+
+            body {
+                padding-bottom: 70px;
+            }
+        }
     </style>
 </head>
 
@@ -438,6 +503,13 @@
         document.addEventListener('DOMContentLoaded', createSnowflakes);
     </script>
     @stack('scripts')
+
+    <!-- Powered By Footer -->
+    <footer class="powered-by-footer">
+        <div class="container">
+            <p>Powered by <a href="https://tekando.com" target="_blank" class="tekando-link">Tekando</a></p>
+        </div>
+    </footer>
 </body>
 
 </html>
