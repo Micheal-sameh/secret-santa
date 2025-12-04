@@ -31,6 +31,11 @@
             overflow-x: hidden;
             overflow-y: auto;
             padding-bottom: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding-top: 10px;
         }
 
         .navbar {
