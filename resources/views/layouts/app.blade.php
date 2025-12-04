@@ -434,7 +434,6 @@
             right: 0;
             background: linear-gradient(135deg, var(--santa-dark) 0%, #16213e 100%);
             backdrop-filter: blur(10px);
-            border-top: 2px solid var(--santa-red);
             padding: 1rem 0;
             z-index: 1000;
             box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
