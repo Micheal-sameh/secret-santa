@@ -1,10 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 
+@php
+    $icon = asset('storage/images/icon.png');
+    $logo = asset('storage/images/logo.png');
+    $tekando = asset('storage/images/tekando.png');
+@endphp
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Secret Santa')</title>
+    <link rel="icon" type="image/x-icon" href="{{ $icon }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     @stack('styles')
     <style>
@@ -24,6 +31,22 @@
             overflow-x: hidden;
             overflow-y: auto;
             padding-bottom: 80px;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1030;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--santa-red);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar-brand img {
+            height: 40px;
         }
 
         html {
@@ -316,13 +339,25 @@
         }
 
         @keyframes twinkle {
-            0% { opacity: 0.3; transform: scale(0.8); }
-            100% { opacity: 1; transform: scale(1.1); }
+            0% {
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
         }
 
         @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* Mobile responsiveness improvements */
@@ -452,6 +487,11 @@
 </head>
 
 <body>
+    <!-- Fixed Logo Icon -->
+    <div style="position: fixed; top: 15px; left: 15px; z-index: 1030;">
+        <img src="{{ $logo }}" alt="Tekando Logo" style="height: 60px; width: auto;">
+    </div>
+
     <!-- Snowflakes -->
     <div id="snowflakes"></div>
 
@@ -506,9 +546,17 @@
 
     <!-- Powered By Footer -->
     <footer class="powered-by-footer">
-        <div class="container">
-            <p>Powered by <a href="https://tekando.com" target="_blank" class="tekando-link">Tekando</a></p>
-        </div>
+        {{-- <div class="container"> --}}
+        <p class="text-center">
+            <img src="{{ $logo }}" alt="secret santa Logo"
+                style="height: 30px; margin-right: 8px; vertical-align: middle;">
+            Powered by <a href="https://tekando.com" target="_blank" class="tekando-link">Tekando</a>
+            <a href="https://tekando.com" target="_blank">
+                <img src="{{ $tekando }}" alt="Tekando Logo"
+                    style="height: 30px; margin-right: 8px; vertical-align: middle;">
+            </a>
+        </p>
+        {{-- </div> --}}
     </footer>
 </body>
 
