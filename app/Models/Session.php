@@ -17,6 +17,7 @@ class Session extends Model
         'name',
         'code',
         'status',
+        'rule',
         'expires_at',
     ];
 

@@ -4,7 +4,7 @@
 @php
     $icon = asset('storage/images/icon.png');
     $logo = asset('storage/images/logo.png');
-    $tekando = asset('storage/images/tekando.png');
+    $tekando = asset('storage/images/tekando.svg');
 @endphp
 
 <head>

@@ -138,6 +138,13 @@
                         </div>
                     @endif
 
+                    @if($session->rule)
+                        <div class="alert alert-info mb-3">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Rules:</strong> {{ $session->rule }}
+                        </div>
+                    @endif
+
                     <div class="text-center mb-4">
                         <div class="">
                             <i class="gift-icon"></i>

@@ -28,6 +28,12 @@
                         <p class="text-muted">Enter your name exactly as you registered to see your Secret Santa assignment.</p>
                     </div>
 
+                    @if($session->rule)
+                        <div class="alert alert-info">
+                            <strong>Session Rules:</strong> {{ $session->rule }}
+                        </div>
+                    @endif
+
                     <form method="POST" action="{{ route('sessions.show-assignment', $session) }}">
                         @csrf
 

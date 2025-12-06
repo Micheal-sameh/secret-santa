@@ -22,6 +22,12 @@
                         <p class="mb-0">Remember to keep your assignment a secret until the gift exchange. Don't tell
                             anyone who you're buying for!</p>
                     </div>
+
+                    @if($session->rule)
+                        <div class="alert alert-info mt-4">
+                            <strong>Session Rules:</strong> {{ $session->rule }}
+                        </div>
+                    @endif
                     @auth
                         <div class="mt-4">
                             <a href="{{ route('sessions.show', $session) }}" class="btn btn-primary">
