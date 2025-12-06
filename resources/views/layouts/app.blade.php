@@ -411,8 +411,8 @@
 
             /* Limit fixed logo width */
             .navbar-brand img, img[alt="Tekando Logo"] {
-                max-width: 50px;
-                height: auto;
+                max-width: 60px;
+                height: 30px;
             }
         }
 
