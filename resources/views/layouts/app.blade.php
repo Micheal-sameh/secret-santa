@@ -576,7 +576,7 @@
             Powered by <a href="https://tekando.com" target="_blank" class="tekando-link">Tekando</a>
             <a href="https://tekando.com" target="_blank">
                 <img src="{{ $tekando }}" alt="Tekando Logo"
-                    style="height: 30px; margin-right: 8px; vertical-align: middle;">
+                    style="height: 35px; margin-right: 8px; vertical-align: middle;">
             </a>
         </p>
         {{-- </div> --}}
