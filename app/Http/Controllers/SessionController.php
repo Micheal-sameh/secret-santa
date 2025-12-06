@@ -30,13 +30,14 @@ class SessionController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'rule' => 'nullable|string',
             'expires_at' => 'nullable|date|after:now',
         ]);
 
         $session = $this->sessionService->createSession([
             'user_id' => auth()->id(),
             'name' => $request->name,
+            'rule' => $request->rule,
             'expires_at' => $request->expires_at,
         ]);
 
@@ -67,7 +68,7 @@ class SessionController extends Controller
         }
         $code = $request->query('code');
 
-        return view('sessions.join-form', compact('code'));
+        return view('sessions.join-form', compact('code', 'session'));
     }
 
     public function join(JoinSessionRequest $request)

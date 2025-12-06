@@ -171,10 +171,10 @@
 
                         <div class="d-flex gap-3 mt-3 flex-wrap">
                             <a href="{{ route('sessions.secret-santa', $session) }}" class="btn btn-primary">
-                                <i class="fas fa-gift me-2"></i>Generate Assignments
+                                <i class="fas fa-gift me-2"></i>Draw Secret Santa
                             </a>
                             <a href="{{ route('sessions.check-assignment', $session) }}" class="btn btn-success">
-                                <i class="fas fa-search me-2"></i>Check My Assignment
+                                <i class="fas fa-search me-2"></i>Check My Drawing
                             </a>
                             <a href="{{ route('sessions.index') }}" class="btn btn-secondary">
                                 <i class="fas fa-arrow-left me-2"></i>Back to Sessions

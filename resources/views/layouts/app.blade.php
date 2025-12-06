@@ -4,7 +4,7 @@
 @php
     $icon = asset('storage/images/icon.png');
     $logo = asset('storage/images/logo.png');
-    $tekando = asset('storage/images/tekando.png');
+    $tekando = asset('storage/images/tekando.svg');
 @endphp
 
 <head>
@@ -390,10 +390,29 @@
 
             .form-control {
                 padding: 0.6rem 0.75rem;
+                word-break: break-all;
             }
 
             .snowflake {
                 font-size: 1rem !important;
+            }
+
+            /* Prevent horizontal scroll */
+            body, html {
+                overflow-x: hidden;
+                max-width: 100vw;
+            }
+
+            .container {
+                max-width: 100%;
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+
+            /* Limit fixed logo width */
+            .navbar-brand img, img[alt="Tekando Logo"] {
+                max-width: 50px;
+                height: auto;
             }
         }
 
