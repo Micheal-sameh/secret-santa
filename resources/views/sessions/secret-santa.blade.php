@@ -11,7 +11,7 @@
             <div class="col-md-10">
                 <div class="card mt-3">
                     <div class="card-header">
-                        <h3><span class="gift-icon"></span>Secret Santa Assignments</h3>
+                        <h3><span class="gift-icon"></span>Secret Santa Draw</h3>
                         <p class="mb-0 mt-2">{{ $session->name }}</p>
                     </div>
                     <div class="card-body">
@@ -36,8 +36,8 @@
                                 Rules</h5>
                             <ul class="mb-0">
                                 <li>Each participant has been randomly assigned someone to buy a gift for</li>
-                                <li>Keep your assignment secret until the gift exchange!</li>
-                                <li>The assignments ensure no one gets themselves</li>
+                                <li>Keep your Draw secret until the gift exchange!</li>
+                                <li>The Draw ensure no one gets themselves</li>
                             </ul>
                         </div>
 
@@ -64,7 +64,7 @@
 
                         <div class="d-flex gap-3 mt-4 flex-wrap justify-content-center">
                             <button onclick="window.print()" class="btn btn-primary">
-                                <i class="fas fa-print me-2"></i>Print Assignments
+                                <i class="fas fa-print me-2"></i>Print Draws
                             </button>
                             <a href="{{ route('sessions.secret-santa.export-pdf', $session) }}" class="btn btn-success">
                                 <i class="fas fa-file-pdf me-2"></i>Export PDF

@@ -11,7 +11,7 @@
                     <h2 class="mb-3">Hello, {{ $participant->name }}!</h2>
 
                     <div class="mb-4">
-                        <p class="lead mb-3">Your Secret Santa assignment is:</p>
+                        <p class="lead mb-3">Your Secret Santa drawing is:</p>
                         <div class="recipient-name">
                             <h3>{{ $assignment->recipient->name }} </h3>
                         </div>
@@ -19,9 +19,15 @@
 
                     <div class="secret-reminder">
                         <h5 class="mb-2">🤫 Keep it Secret!</h5>
-                        <p class="mb-0">Remember to keep your assignment a secret until the gift exchange. Don't tell
+                        <p class="mb-0">Remember to keep your drawing a secret until the gift exchange. Don't tell
                             anyone who you're buying for!</p>
                     </div>
+
+                    @if($session->rule)
+                        <div class="alert alert-info mt-4">
+                            <strong>Session Rules:</strong> {{ $session->rule }}
+                        </div>
+                    @endif
                     @auth
                         <div class="mt-4">
                             <a href="{{ route('sessions.show', $session) }}" class="btn btn-primary">

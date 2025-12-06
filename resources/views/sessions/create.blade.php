@@ -203,6 +203,12 @@
                             </div>
 
                             <div class="mb-3">
+                                <label for="rule" class="form-label">Rule (Optional)</label>
+                                <textarea class="form-control" id="rule" name="rule" rows="3" placeholder="Add any rules or instructions for your Secret Santa session...">{{ old('rule') }}</textarea>
+                                <div class="form-text">Specify any special rules or guidelines for participants</div>
+                            </div>
+
+                            <div class="mb-3">
                                 <label for="expires_at" class="form-label">Gift Exchange Date</label>
                                 <input type="datetime-local" class="form-control" id="expires_at" name="expires_at"
                                     value="{{ old('expires_at') }}">
