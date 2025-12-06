@@ -8,7 +8,7 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h3><span class="gift-icon"></span>Check Your Secret Santa Assignment</h3>
+                    <h3><span class="gift-icon"></span>Check Your Secret Santa Drawing</h3>
                     <p class="mb-0 mt-2">{{ $session->name }}</p>
                 </div>
                 <div class="card-body">
@@ -25,7 +25,7 @@
                     <div class="text-center mb-4">
                         <i class="fas fa-gift fa-3x text-primary mb-3"></i>
                         <h4>Find Out Who You're Buying For!</h4>
-                        <p class="text-muted">Enter your name exactly as you registered to see your Secret Santa assignment.</p>
+                        <p class="text-muted">Enter your name exactly as you registered to see your Secret Santa Drwaing.</p>
                     </div>
 
                     @if($session->rule)
@@ -48,7 +48,7 @@
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-search me-2"></i>Reveal My Assignment
+                                <i class="fas fa-search me-2"></i>Reveal My Drawing
                             </button>
                         </div>
                     </form>

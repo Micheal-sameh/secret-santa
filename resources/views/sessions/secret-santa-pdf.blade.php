@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Secret Santa Assignments - {{ $session->name }}</title>
+    <title>Secret Santa Drawing - {{ $session->name }}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -92,7 +92,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>Secret Santa Assignments</h1>
+        <h1>Secret Santa Drawings</h1>
         <p><strong>Session:</strong> {{ $session->name }}</p>
         <p><strong>Generated on:</strong> {{ now()->format('F j, Y \a\t g:i A') }}</p>
     </div>
@@ -101,8 +101,8 @@
         <h3>Secret Santa Rules</h3>
         <ul>
             <li>Each participant has been randomly assigned someone to buy a gift for</li>
-            <li>Keep your assignment secret until the gift exchange!</li>
-            <li>The assignments ensure no one gets themselves</li>
+            <li>Keep your Draw secret until the gift exchange!</li>
+            <li>The Draw ensure no one gets themselves</li>
         </ul>
     </div>
 

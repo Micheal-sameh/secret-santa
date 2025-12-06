@@ -164,7 +164,7 @@
                                    placeholder="Enter your name">
                             <div class="form-text">
                                 <i class="fas fa-info-circle me-1"></i>
-                                This is how you'll appear in the Secret Santa assignments
+                                This is how you'll appear in the Secret Santa Dwaing.
                             </div>
                         </div>
 
