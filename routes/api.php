@@ -27,6 +27,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
+
     Route::prefix('sessions')->group(function () {
         Route::get('/', [SessionController::class, 'index']);
         Route::post('/', [SessionController::class, 'store']);
@@ -34,8 +35,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{session}/secret-santa', [SessionController::class, 'secretSanta']);
         Route::get('/{session}', [SessionController::class, 'show']);
     });
-    Route::prefix('sessions')->group(function () {
-        Route::post('/join', [SessionController::class, 'join']);
-        Route::get('/{session}/assignment', [SessionController::class, 'showAssignment']);
-    });
+});
+
+Route::prefix('santa')->group(function () {
+    Route::post('/join', [SessionController::class, 'join']);
+    Route::get('/{session}/assignment', [SessionController::class, 'showAssignment']);
 });
