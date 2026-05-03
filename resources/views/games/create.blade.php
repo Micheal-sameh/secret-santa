@@ -50,7 +50,7 @@
                 <div class="relative">
                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
                     <input type="number" name="price_limit" value="{{ old('price_limit') }}"
-                           min="0" step="0.01"
+                           min="0" step="1"
                            class="w-full pl-7 pr-4 py-3 rounded-xl bg-slate-700/60 border border-slate-600 focus:border-amber-500/60 focus:ring-2 focus:ring-amber-500/20 text-white placeholder-slate-400 text-sm outline-none transition-all"
                            placeholder="50.00">
                 </div>

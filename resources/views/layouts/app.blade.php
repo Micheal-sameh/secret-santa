@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -79,7 +79,7 @@
     </style>
     @stack('styles')
 </head>
-<body class="min-h-full text-slate-200 relative overflow-x-hidden">
+<body class="min-h-screen text-slate-200 relative overflow-x-hidden">
 
     <!-- Snowflakes -->
     <div id="snowflakes" aria-hidden="true"></div>
@@ -99,7 +99,7 @@
 
                 <!-- Desktop nav -->
                 <div class="hidden md:flex items-center gap-1">
-                    @auth
+                        @auth
                         <a href="{{ route('dashboard') }}" class="nav-link px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-700/60">
                             🎄 Dashboard
                         </a>
@@ -117,14 +117,17 @@
                     @auth
                         <div class="hidden sm:flex items-center gap-2">
                             @if(Auth::user()->avatar)
-                                <img src="{{ Auth::user()->avatar }}" alt="{{ Auth::user()->name }}"
-                                     class="w-8 h-8 rounded-full ring-2 ring-santa-gold/40">
+                                <a href="{{ route('profile') }}">
+                                    <img src="{{ Auth::user()->avatar }}" alt="{{ Auth::user()->name }}"
+                                         class="w-8 h-8 rounded-full ring-2 ring-santa-gold/40 hover:ring-santa-gold transition-all">
+                                </a>
                             @else
-                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-santa-red to-santa-gold flex items-center justify-center text-sm font-bold text-white">
+                                <a href="{{ route('profile') }}"
+                                   class="w-8 h-8 rounded-full bg-gradient-to-br from-santa-red to-santa-gold flex items-center justify-center text-sm font-bold text-white hover:opacity-80 transition-opacity">
                                     {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                                </div>
+                                </a>
                             @endif
-                            <span class="text-sm text-slate-300 hidden lg:block">{{ Auth::user()->name }}</span>
+                            <a href="{{ route('profile') }}" class="text-sm text-slate-300 hidden lg:block hover:text-amber-400 transition-colors">{{ Auth::user()->name }}</a>
                         </div>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
@@ -164,6 +167,9 @@
                 <a href="{{ route('games.create') }}" class="block px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-700 text-sm">
                     ➕ New Game
                 </a>
+                <a href="{{ route('profile') }}" class="block px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-700 text-sm">
+                    👤 My Profile
+                </a>
             @endauth
             <a href="{{ route('inperson.create') }}" class="block px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-700 text-sm">
                 🎁 In-Person Game
@@ -198,7 +204,8 @@
 
     <!-- Footer -->
     <footer class="relative z-10 border-t border-slate-800 mt-16 py-8 text-center text-slate-500 text-sm">
-        <span>🎅 Secret Santa &copy; {{ date('Y') }} — Spreading holiday joy</span>
+        <p>🎅 Secret Santa &copy; {{ date('Y') }} — Spreading holiday joy</p>
+        <p class="mt-1 text-slate-600">Created by <span class="text-amber-500/70 font-medium">{{ config('company.name') }}</span></p>
     </footer>
 
     <script>

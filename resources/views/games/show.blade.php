@@ -84,12 +84,12 @@
                 </div>
             </div>
 
-            <!-- Share Link -->
+            <!-- Share Link + QR -->
             @if($isHost || $isParticipant)
             <div class="glass-card rounded-2xl p-6">
                 <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">🔗 Share This Game</h2>
-                <p class="text-sm text-slate-400 mb-3">Send this link to people you want to invite:</p>
-                <div class="flex gap-2">
+                <p class="text-sm text-slate-400 mb-3">Send this link or scan the QR code to join:</p>
+                <div class="flex gap-2 mb-4">
                     <input type="text" id="share-link" readonly
                            value="{{ url('/games/' . $game->join_token) }}"
                            class="flex-1 px-4 py-2.5 rounded-xl bg-slate-900/60 border border-slate-600 text-slate-300 text-sm outline-none">
@@ -98,6 +98,11 @@
                             id="copy-btn">
                         📋 Copy
                     </button>
+                </div>
+                <!-- QR Code -->
+                <div class="flex flex-col items-center gap-2">
+                    <p class="text-xs text-slate-500">Scan to join:</p>
+                    <div id="qrcode" class="p-3 bg-white rounded-xl inline-block"></div>
                 </div>
             </div>
             @endif
@@ -178,10 +183,11 @@
             @endauth
 
             <!-- Participants list -->
-            <div class="glass-card rounded-2xl p-5">
+            <div class="glass-card rounded-2xl p-5" id="participants-card">
                 <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">
-                    👥 Participants ({{ $game->participants->count() }})
+                    👥 Participants (<span id="participant-count">{{ $game->participants->count() }}</span>)
                 </h2>
+                <div id="participants-list">
                 @if($game->participants->isEmpty())
                     <p class="text-slate-500 text-sm">No participants yet.</p>
                 @else
@@ -204,6 +210,7 @@
                         @endforeach
                     </ul>
                 @endif
+                </div>
             </div>
 
         </div>
@@ -212,7 +219,26 @@
 @endsection
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script>
+// QR Code generation
+@if($isHost || $isParticipant)
+(function() {
+    const url = document.getElementById('share-link')?.value;
+    if (url && typeof QRCode !== 'undefined') {
+        new QRCode(document.getElementById('qrcode'), {
+            text: url,
+            width: 160,
+            height: 160,
+            colorDark: '#0f172a',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.M
+        });
+    }
+})();
+@endif
+
+// Copy link
 function copyLink() {
     const input = document.getElementById('share-link');
     const btn   = document.getElementById('copy-btn');
@@ -226,5 +252,54 @@ function copyLink() {
         setTimeout(() => btn.textContent = '📋 Copy', 2000);
     });
 }
+
+// Real-time participant polling (every 8 seconds, only if game is open)
+@if(!$game->isAssigned() && !$game->isExpired())
+(function() {
+    const hostId = {{ $game->host_id }};
+
+    function renderParticipants(data) {
+        const countEl = document.getElementById('participant-count');
+        const listEl  = document.getElementById('participants-list');
+        if (!countEl || !listEl) return;
+
+        countEl.textContent = data.count;
+
+        if (data.count === 0) {
+            listEl.innerHTML = '<p class="text-slate-500 text-sm">No participants yet.</p>';
+            return;
+        }
+
+        const ul = document.createElement('ul');
+        ul.className = 'space-y-2';
+
+        data.participants.forEach(p => {
+            const li = document.createElement('li');
+            li.className = 'flex items-center gap-3';
+            const initial = p.name.charAt(0).toUpperCase();
+            const avatar = p.avatar
+                ? `<img src="${p.avatar}" alt="${p.name}" class="w-7 h-7 rounded-full ring-1 ring-slate-600">`
+                : `<div class="w-7 h-7 rounded-full bg-gradient-to-br from-red-500 to-amber-500 flex items-center justify-center text-xs font-bold text-white">${initial}</div>`;
+            const hostBadge = p.is_host ? '<span class="text-xs text-amber-500">host</span>' : '';
+            li.innerHTML = `${avatar}<span class="text-sm text-slate-300">${p.name}</span>${hostBadge}`;
+            ul.appendChild(li);
+        });
+
+        listEl.innerHTML = '';
+        listEl.appendChild(ul);
+    }
+
+    function pollParticipants() {
+        fetch('{{ route("games.participants", $game->join_token) }}', {
+            headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(data => renderParticipants(data))
+        .catch(() => {});
+    }
+
+    setInterval(pollParticipants, 8000);
+})();
+@endif
 </script>
 @endpush

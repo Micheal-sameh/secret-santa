@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -39,7 +39,7 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+<body class="min-h-screen flex items-center justify-center p-4 relative overflow-x-hidden">
 
     <div id="snowflakes" aria-hidden="true"></div>
 
@@ -63,6 +63,9 @@
         <!-- Footer link -->
         <p class="text-center mt-6 text-slate-500 text-sm">
             @yield('footer-link')
+        </p>
+        <p class="text-center mt-4 text-slate-600 text-xs">
+            Created by <span class="text-amber-500/70 font-medium">{{ config('company.name') }}</span>
         </p>
     </div>
 

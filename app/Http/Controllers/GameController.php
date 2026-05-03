@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreGameRequest;
 use App\Models\Assignment;
 use App\Models\Game;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -44,14 +46,9 @@ class GameController extends Controller
         return view('games.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreGameRequest $request): RedirectResponse
     {
-        $data = $request->validate([
-            'name'         => ['required', 'string', 'max:255'],
-            'price_limit'  => ['nullable', 'numeric', 'min:0'],
-            'end_date'     => ['required', 'date', 'after:today'],
-            'meeting_date' => ['required', 'date', 'after_or_equal:end_date'],
-        ]);
+        $data = $request->validated();
 
         $game = Game::create([
             ...$data,
@@ -144,6 +141,23 @@ class GameController extends Controller
         return redirect()
             ->route('games.show', $game->join_token)
             ->with('success', 'Assignments are done! Everyone can now see who they\'re buying for. 🎁');
+    }
+
+    public function participants(string $token): JsonResponse
+    {
+        $game = Game::where('join_token', $token)
+            ->with('participants')
+            ->firstOrFail();
+
+        return response()->json([
+            'count'        => $game->participants->count(),
+            'participants' => $game->participants->map(fn ($p) => [
+                'id'     => $p->id,
+                'name'   => $p->name,
+                'avatar' => $p->avatar,
+                'is_host'=> $p->id === $game->host_id,
+            ]),
+        ]);
     }
 
     /**

@@ -45,7 +45,7 @@
                 <div class="relative">
                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
                     <input type="number" name="price_limit" value="{{ old('price_limit') }}"
-                           min="0" step="0.01"
+                           min="0" step="1"
                            class="w-full pl-7 pr-4 py-3 rounded-xl bg-slate-700/60 border border-slate-600 focus:border-amber-500/60 focus:ring-2 focus:ring-amber-500/20 text-white placeholder-slate-400 text-sm outline-none transition-all"
                            placeholder="30.00">
                 </div>
@@ -56,7 +56,7 @@
                 <div class="flex items-center justify-between mb-3">
                     <label class="text-sm font-medium text-slate-300">
                         Participants <span class="text-red-400">*</span>
-                        <span class="ml-1 text-slate-500 font-normal">(min. 2)</span>
+                        <span class="ml-1 text-slate-500 font-normal">(min. 3)</span>
                     </label>
                     <span id="count-badge"
                           class="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-700 text-slate-300">
@@ -85,29 +85,42 @@
 
 @push('scripts')
 <script>
+const MIN_PARTICIPANTS = 3;
 let count = 0;
 
-function addParticipant(value = '') {
+function addParticipant(value = '', locked = false) {
     count++;
     const list = document.getElementById('participants-list');
     const div  = document.createElement('div');
     div.className = 'flex gap-2 items-center participant-row';
     div.dataset.id = count;
+
+    const removeBtn = locked
+        ? `<span class="w-9 h-9 shrink-0 flex items-center justify-center rounded-xl text-slate-600 cursor-not-allowed" title="Required participant">
+               🔒
+           </span>`
+        : `<button type="button" onclick="removeParticipant(${count})"
+                class="w-9 h-9 shrink-0 flex items-center justify-center rounded-xl hover:bg-red-500/20 text-slate-400 hover:text-red-400 transition-colors">
+               ✕
+           </button>`;
+
     div.innerHTML = `
         <input type="text" name="participants[]" value="${escapeHtml(value)}" required maxlength="100"
                placeholder="Name ${count}"
                class="flex-1 px-4 py-2.5 rounded-xl bg-slate-700/60 border border-slate-600 focus:border-amber-500/60 focus:ring-2 focus:ring-amber-500/20 text-white placeholder-slate-400 text-sm outline-none transition-all">
-        <button type="button" onclick="removeParticipant(${count})"
-                class="w-9 h-9 shrink-0 flex items-center justify-center rounded-xl hover:bg-red-500/20 text-slate-400 hover:text-red-400 transition-colors">
-            ✕
-        </button>
+        ${removeBtn}
     `;
     list.appendChild(div);
     updateCount();
-    div.querySelector('input').focus();
+    if (!locked) div.querySelector('input').focus();
 }
 
 function removeParticipant(id) {
+    const allRows = document.querySelectorAll('.participant-row');
+    if (allRows.length <= MIN_PARTICIPANTS) {
+        alert('A minimum of 3 participants is required.');
+        return;
+    }
     const row = document.querySelector(`[data-id="${id}"]`);
     if (row) row.remove();
     updateCount();
@@ -125,12 +138,15 @@ function escapeHtml(str) {
 
 // Pre-fill from old input if validation failed
 @if(old('participants'))
-    @foreach(old('participants') as $name)
-        addParticipant({{ json_encode($name) }});
+    @php $oldParts = old('participants'); @endphp
+    @foreach(old('participants') as $index => $name)
+        addParticipant({{ json_encode($name) }}, {{ $index < 3 ? 'true' : 'false' }});
     @endforeach
+    // Ensure minimum 3 locked rows exist even after validation
+    while (count < MIN_PARTICIPANTS) addParticipant('', true);
 @else
-    // Start with 3 empty rows
-    addParticipant(); addParticipant(); addParticipant();
+    // Start with 3 required (locked) rows
+    addParticipant('', true); addParticipant('', true); addParticipant('', true);
 @endif
 </script>
 @endpush

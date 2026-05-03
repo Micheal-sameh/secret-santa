@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreInPersonGameRequest;
 use App\Models\InPersonGame;
 use App\Models\InPersonParticipant;
 use Illuminate\Http\RedirectResponse;
@@ -15,14 +16,8 @@ class InPersonGameController extends Controller
         return view('inperson.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreInPersonGameRequest $request): RedirectResponse
     {
-        $request->validate([
-            'name'            => ['required', 'string', 'max:255'],
-            'price_limit'     => ['nullable', 'numeric', 'min:0'],
-            'participants'    => ['required', 'array', 'min:2'],
-            'participants.*'  => ['required', 'string', 'max:100', 'distinct'],
-        ]);
 
         $game = InPersonGame::create([
             'name'         => $request->name,

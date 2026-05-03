@@ -46,10 +46,15 @@
                    class="w-full px-4 py-3 rounded-xl bg-slate-700/60 border border-slate-600 focus:border-amber-500/60 focus:ring-2 focus:ring-amber-500/20 text-white placeholder-slate-400 text-sm outline-none transition-all"
                    placeholder="••••••••">
         </div>
-        <div class="flex items-center gap-2">
-            <input type="checkbox" id="remember" name="remember"
-                   class="w-4 h-4 rounded border-slate-600 bg-slate-700 text-amber-500 focus:ring-amber-500/30">
-            <label for="remember" class="text-sm text-slate-400">Remember me</label>
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <input type="checkbox" id="remember" name="remember"
+                       class="w-4 h-4 rounded border-slate-600 bg-slate-700 text-amber-500 focus:ring-amber-500/30">
+                <label for="remember" class="text-sm text-slate-400">Remember me</label>
+            </div>
+            <a href="{{ route('password.request') }}" class="text-sm text-amber-400 hover:text-amber-300 transition-colors">
+                Forgot password?
+            </a>
         </div>
         <button type="submit"
                 class="w-full py-3 px-6 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-sm transition-colors mt-2 shadow-lg shadow-red-900/30">

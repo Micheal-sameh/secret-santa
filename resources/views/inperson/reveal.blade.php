@@ -9,7 +9,7 @@
         body {
             background: radial-gradient(ellipse at top, #3b0764 0%, #1a0033 30%, #0f172a 70%);
             min-height: 100vh;
-            overflow: hidden;
+            overflow-x: hidden;
         }
         /* Confetti */
         .confetti-piece {
@@ -122,7 +122,7 @@
     <div class="relative z-10 mt-8 text-center">
         <a href="{{ route('inperson.show', $game->device_token) }}"
            class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-600 text-slate-300 hover:text-white text-sm font-medium transition-all">
-            ← I've seen it! Go back
+            ✅ Done — Next Person
         </a>
     </div>
 
