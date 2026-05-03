@@ -49,9 +49,12 @@
         <div class="text-center mb-8">
             <a href="{{ route('welcome') }}" class="inline-flex flex-col items-center gap-2">
                 <span class="text-5xl">🎅</span>
-                <span class="text-2xl font-bold text-white tracking-tight">
-                    Secret<span class="text-amber-400">Santa</span>
-                </span>
+                <div class="flex flex-col items-center">
+                    <span class="text-2xl font-bold text-white tracking-tight">
+                        Secret<span class="text-amber-400">Santa</span>
+                    </span>
+                    <span class="text-xs text-slate-400 font-medium">by Crafando</span>
+                </div>
             </a>
         </div>
 
@@ -63,9 +66,6 @@
         <!-- Footer link -->
         <p class="text-center mt-6 text-slate-500 text-sm">
             @yield('footer-link')
-        </p>
-        <p class="text-center mt-4 text-slate-600 text-xs">
-            Created by <span class="text-amber-500/70 font-medium">{{ config('company.name') }}</span>
         </p>
     </div>
 

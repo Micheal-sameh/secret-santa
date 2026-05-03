@@ -3,17 +3,22 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\ResetPasswordRequest;
+use App\Http\Requests\SendResetLinkRequest;
+use App\Services\AuthService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
 use Illuminate\View\View;
 use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
+    public function __construct(
+        private AuthService $authService
+    ) {}
     public function showLogin(): View
     {
         return view('auth.login');
@@ -24,7 +29,7 @@ class AuthController extends Controller
         return view('auth.register');
     }
 
-    public function login(Request $request): RedirectResponse
+    public function login(LoginRequest $request): RedirectResponse
     {
         $credentials = $request->validate([
             'email'    => ['required', 'email'],
@@ -49,20 +54,9 @@ class AuthController extends Controller
             ->onlyInput('email');
     }
 
-    public function register(Request $request): RedirectResponse
+    public function register(RegisterRequest $request): RedirectResponse
     {
-        $data = $request->validate([
-            'name'                  => ['required', 'string', 'max:255'],
-            'email'                 => ['required', 'email', 'unique:users'],
-            'password'              => ['required', 'string', 'min:8', 'confirmed'],
-            'password_confirmation' => ['required'],
-        ]);
-
-        $user = User::create([
-            'name'     => $data['name'],
-            'email'    => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
+        $user = $this->authService->register($request->validated());
 
         Auth::login($user);
         $request->session()->regenerate();
@@ -88,15 +82,12 @@ class AuthController extends Controller
     {
         $googleUser = Socialite::driver('google')->user();
 
-        $user = User::updateOrCreate(
-            ['google_id' => $googleUser->id],
-            [
-                'name'      => $googleUser->name,
-                'email'     => $googleUser->email,
-                'avatar'    => $googleUser->avatar,
-                'google_id' => $googleUser->id,
-            ]
-        );
+        $user = $this->authService->findOrCreateGoogleUser([
+            'id' => $googleUser->id,
+            'name' => $googleUser->name,
+            'email' => $googleUser->email,
+            'avatar' => $googleUser->avatar,
+        ]);
 
         Auth::login($user, true);
         $request->session()->regenerate();
@@ -111,17 +102,14 @@ class AuthController extends Controller
         return view('auth.forgot-password');
     }
 
-    public function sendResetLink(Request $request): RedirectResponse
+    public function sendResetLink(SendResetLinkRequest $request): RedirectResponse
     {
-        $request->validate(['email' => ['required', 'email']]);
-
-        $status = Password::sendResetLink($request->only('email'));
-
-        if ($status === Password::RESET_LINK_SENT) {
+        try {
+            $this->authService->sendResetLink($request->email);
             return back()->with('success', 'Password reset link sent! Check your email.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['email' => $e->getMessage()]);
         }
-
-        return back()->withErrors(['email' => __($status)]);
     }
 
     public function showResetPassword(string $token): View
@@ -129,7 +117,7 @@ class AuthController extends Controller
         return view('auth.reset-password', ['token' => $token]);
     }
 
-    public function resetPassword(Request $request): RedirectResponse
+    public function resetPassword(ResetPasswordRequest $request): RedirectResponse
     {
         $request->validate([
             'token'                 => ['required'],
@@ -138,15 +126,9 @@ class AuthController extends Controller
             'password_confirmation' => ['required'],
         ]);
 
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function (User $user, string $password) {
-                $user->password = Hash::make($password);
-                $user->save();
-            }
-        );
+        $status = $this->authService->resetPassword($request->validated());
 
-        if ($status === Password::PASSWORD_RESET) {
+        if ($status === \Illuminate\Support\Facades\Password::PASSWORD_RESET) {
             return redirect()->route('login')->with('success', 'Password reset successfully! You can now log in.');
         }
 

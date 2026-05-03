@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UpdateProfileRequest;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\View\View;
+use App\Services\ProfileService;
 
 class ProfileController extends Controller
 {
+    public function __construct(
+        private ProfileService $profileService
+    ) {}
     public function show(): View
     {
         return view('profile.show', ['user' => Auth::user()]);
@@ -30,14 +29,7 @@ class ProfileController extends Controller
             }
         }
 
-        $user->name  = $data['name'];
-        $user->email = $data['email'];
-
-        if ($request->filled('password')) {
-            $user->password = Hash::make($data['password']);
-        }
-
-        $user->save();
+        $this->profileService->updateProfile($user, $data);
 
         return back()->with('success', 'Profile updated successfully!');
     }

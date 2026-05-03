@@ -92,9 +92,12 @@
                 <!-- Logo -->
                 <a href="{{ route('welcome') }}" class="flex items-center gap-2 group">
                     <span class="text-2xl group-hover:animate-bounce-slow">🎅</span>
-                    <span class="font-bold text-lg tracking-tight text-white">
-                        Secret<span class="text-santa-gold">Santa</span>
-                    </span>
+                    <div class="flex flex-col">
+                        <span class="font-bold text-lg tracking-tight text-white">
+                            Secret<span class="text-santa-gold">Santa</span>
+                        </span>
+                        <span class="text-xs text-slate-400 font-medium">by Crafando</span>
+                    </div>
                 </a>
 
                 <!-- Desktop nav -->
@@ -205,7 +208,6 @@
     <!-- Footer -->
     <footer class="relative z-10 border-t border-slate-800 mt-16 py-8 text-center text-slate-500 text-sm">
         <p>🎅 Secret Santa &copy; {{ date('Y') }} — Spreading holiday joy</p>
-        <p class="mt-1 text-slate-600">Created by <span class="text-amber-500/70 font-medium">{{ config('company.name') }}</span></p>
     </footer>
 
     <script>

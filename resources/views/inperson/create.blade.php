@@ -81,14 +81,49 @@
         </form>
     </div>
 </div>
+
+<!-- Login Required Modal -->
+<div id="login-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeLoginModal()"></div>
+    <div class="relative z-10 bg-slate-800 border border-slate-700 rounded-2xl p-8 max-w-sm w-full shadow-2xl text-center">
+        <div class="text-5xl mb-4">🔒</div>
+        <h2 class="text-xl font-bold text-white mb-2">Login Required</h2>
+        <p class="text-slate-400 text-sm mb-6">
+            No login games are limited to <span class="text-amber-400 font-semibold">5 participants</span>.<br>
+            Login to enjoy full features with unlimited participants!
+        </p>
+        <div class="flex flex-col gap-3">
+            <a href="{{ route('login') }}"
+               class="w-full py-3 px-6 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-sm transition-colors">
+                Login to continue
+            </a>
+            <a href="{{ route('register') }}"
+               class="w-full py-3 px-6 rounded-xl bg-slate-700 hover:bg-slate-600 text-white font-medium text-sm transition-colors">
+                Create a free account
+            </a>
+            <button onclick="closeLoginModal()"
+                    class="text-slate-500 hover:text-slate-300 text-sm transition-colors">
+                Maybe later
+            </button>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @push('scripts')
 <script>
 const MIN_PARTICIPANTS = 3;
+const MAX_PARTICIPANTS_GUEST = 5;
+const IS_AUTHENTICATED = {{ auth()->check() ? 'true' : 'false' }};
 let count = 0;
 
 function addParticipant(value = '', locked = false) {
+    const currentRows = document.querySelectorAll('.participant-row').length;
+    if (!locked && !IS_AUTHENTICATED && currentRows >= MAX_PARTICIPANTS_GUEST) {
+        showLoginModal();
+        return;
+    }
     count++;
     const list = document.getElementById('participants-list');
     const div  = document.createElement('div');
@@ -130,6 +165,18 @@ function updateCount() {
     const rows = document.querySelectorAll('.participant-row');
     const badge = document.getElementById('count-badge');
     badge.textContent = rows.length + (rows.length === 1 ? ' person' : ' people');
+}
+
+function showLoginModal() {
+    const modal = document.getElementById('login-modal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function closeLoginModal() {
+    const modal = document.getElementById('login-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
 }
 
 function escapeHtml(str) {
