@@ -50,7 +50,7 @@ class GameController extends Controller
             'name'         => ['required', 'string', 'max:255'],
             'price_limit'  => ['nullable', 'numeric', 'min:0'],
             'end_date'     => ['required', 'date', 'after:today'],
-            'meeting_date' => ['required', 'date', 'after:end_date'],
+            'meeting_date' => ['required', 'date', 'after_or_equal:end_date'],
         ]);
 
         $game = Game::create([
