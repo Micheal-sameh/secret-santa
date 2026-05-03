@@ -1,5 +1,164 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Secret Santa 🎅</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: radial-gradient(ellipse at top, #1a0a2e 0%, #0f172a 50%); }
+        .snowflake { position:fixed; top:-20px; pointer-events:none; z-index:0; animation:snowfall linear infinite; color:rgba(255,255,255,0.4); }
+        @keyframes snowfall {
+            0%   { transform: translateY(-20px) translateX(0) rotate(0deg); opacity:0.8; }
+            50%  { transform: translateY(50vh)  translateX(20px) rotate(180deg); opacity:0.5; }
+            100% { transform: translateY(105vh) translateX(-15px) rotate(360deg); opacity:0; }
+        }
+        .glow-red  { box-shadow: 0 0 30px rgba(220,38,38,0.3); }
+        .glow-gold { box-shadow: 0 0 30px rgba(245,158,11,0.25); }
+        .feature-card { background: rgba(30,41,59,0.7); border:1px solid rgba(51,65,85,0.5); backdrop-filter:blur(8px); }
+        .hero-title {
+            background: linear-gradient(135deg, #ffffff 0%, #fbbf24 40%, #dc2626 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white overflow-x-hidden">
+
+<div id="snowflakes" aria-hidden="true"></div>
+
+<!-- Nav -->
+<nav class="fixed top-0 inset-x-0 z-50 bg-slate-900/80 backdrop-blur border-b border-slate-800">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <span class="text-2xl">🎅</span>
+            <span class="font-bold text-white">Secret<span class="text-amber-400">Santa</span></span>
+        </div>
+        <div class="flex items-center gap-3">
+            @auth
+                <a href="{{ route('dashboard') }}"
+                   class="text-sm px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium transition-colors">
+                    Dashboard
+                </a>
+            @else
+                <a href="{{ route('login') }}" class="text-sm text-slate-300 hover:text-white px-3 py-2">Login</a>
+                <a href="{{ route('register') }}"
+                   class="text-sm px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium transition-colors">
+                    Get Started
+                </a>
+            @endauth
+        </div>
+    </div>
+</nav>
+
+<!-- Hero -->
+<section class="relative z-10 pt-32 pb-20 px-4 text-center">
+    <div class="max-w-4xl mx-auto">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-medium mb-6 tracking-wide uppercase">
+            🎄 The best Secret Santa platform
+        </div>
+        <h1 class="text-5xl sm:text-7xl font-black mb-6 leading-tight hero-title">
+            Secret Santa
+        </h1>
+        <p class="text-lg sm:text-xl text-slate-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+            Organize magical gift exchanges online or in-person. Create games, invite friends,
+            and discover who you're buying for — all with a festive twist.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{{ route('register') }}"
+               class="group px-8 py-4 rounded-2xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold text-lg transition-all glow-red">
+                🎅 Start a Hosted Game
+                <span class="ml-2 group-hover:translate-x-1 inline-block transition-transform">→</span>
+            </a>
+            <a href="{{ route('inperson.create') }}"
+               class="group px-8 py-4 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-amber-500/50 text-white font-bold text-lg transition-all">
+                🎁 In-Person Quick Game
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- How it works: Hosted -->
+<section class="relative z-10 py-16 px-4">
+    <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-white mb-3">🎄 Hosted Game Workflow</h2>
+            <p class="text-slate-400">Perfect for remote friends and families</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            @foreach([
+                ['1','Create a Game','Set the gift budget, join deadline, and meeting date.','🎮'],
+                ['2','Invite Friends','Share the unique link — anyone with it can join.','🔗'],
+                ['3','Assignments','After the deadline, hit \'Assign\' to pair everyone up.','🎯'],
+                ['4','Reveal','Each participant visits the link to see who they\'re gifting.','🎁'],
+            ] as [$step, $title, $desc, $icon])
+            <div class="feature-card rounded-2xl p-6 text-center">
+                <div class="w-10 h-10 rounded-full bg-red-500/20 text-red-400 text-sm font-bold flex items-center justify-center mx-auto mb-3">{{ $step }}</div>
+                <div class="text-3xl mb-3">{{ $icon }}</div>
+                <h3 class="font-semibold text-white mb-2">{{ $title }}</h3>
+                <p class="text-slate-400 text-sm leading-relaxed">{{ $desc }}</p>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+<!-- In-Person section -->
+<section class="relative z-10 py-16 px-4">
+    <div class="max-w-4xl mx-auto">
+        <div class="feature-card rounded-3xl p-8 sm:p-12 text-center glow-gold">
+            <span class="text-5xl mb-6 block">🎁</span>
+            <h2 class="text-3xl font-bold text-white mb-4">In-Person Quick Game</h2>
+            <p class="text-slate-400 text-lg mb-8 max-w-xl mx-auto leading-relaxed">
+                At a party? Enter all names, pass your device around, and each person
+                secretly taps to reveal who they're buying for — no accounts needed.
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 text-left">
+                @foreach([
+                    ['📝','Enter Names','Type in everyone attending the party.'],
+                    ['📱','Pass Device','Each person taps their name to see their match.'],
+                    ['🤫','Keep Secret','Only they see their assignment on screen.'],
+                ] as [$icon, $title, $desc])
+                <div class="bg-slate-900/50 rounded-xl p-4">
+                    <div class="text-2xl mb-2">{{ $icon }}</div>
+                    <div class="font-semibold text-white text-sm mb-1">{{ $title }}</div>
+                    <div class="text-slate-400 text-xs">{{ $desc }}</div>
+                </div>
+                @endforeach
+            </div>
+            <a href="{{ route('inperson.create') }}"
+               class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-lg transition-colors">
+                Start In-Person Game 🎉
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="relative z-10 py-8 text-center text-slate-600 text-sm border-t border-slate-800 mt-8">
+    🎅 Secret Santa &copy; {{ date('Y') }}
+</footer>
+
+<script>
+    (function() {
+        const c = document.getElementById('snowflakes');
+        const f = ['❄','❅','❆','✦'];
+        for (let i = 0; i < 25; i++) {
+            const el = document.createElement('span');
+            el.className = 'snowflake';
+            el.textContent = f[Math.floor(Math.random()*f.length)];
+            el.style.left  = Math.random()*100+'vw';
+            el.style.fontSize = (0.5+Math.random()*1.2)+'rem';
+            el.style.animationDuration = (10+Math.random()*15)+'s';
+            el.style.animationDelay    = (Math.random()*12)+'s';
+            c.appendChild(el);
+        }
+    })();
+</script>
+</body>
+</html>
+
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">

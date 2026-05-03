@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -12,15 +13,12 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
+        'google_id',
+        'avatar',
     ];
 
     /**
@@ -42,4 +40,24 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function hostedGames(): HasMany
+    {
+        return $this->hasMany(Game::class, 'host_id');
+    }
+
+    public function participatedGames(): BelongsToMany
+    {
+        return $this->belongsToMany(Game::class, 'game_participants');
+    }
+
+    public function givenAssignments(): HasMany
+    {
+        return $this->hasMany(Assignment::class, 'giver_id');
+    }
+
+    public function receivedAssignments(): HasMany
+    {
+        return $this->hasMany(Assignment::class, 'receiver_id');
+    }
 }
