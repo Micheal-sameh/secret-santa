@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\DTOs\UpdateProfileData;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Hash;
@@ -12,25 +13,18 @@ class ProfileService
         private UserRepository $userRepository
     ) {}
 
-    public function updateProfile(User $user, array $data): User
+    public function updateProfile(User $user, UpdateProfileData $data): User
     {
-        $updateData = [];
+        $updateData = [
+            'name'  => $data->name,
+            'email' => $data->email,
+        ];
 
-        if (isset($data['name'])) {
-            $updateData['name'] = $data['name'];
+        if ($data->password !== null) {
+            $updateData['password'] = Hash::make($data->password);
         }
 
-        if (isset($data['email'])) {
-            $updateData['email'] = $data['email'];
-        }
-
-        if (isset($data['password']) && !empty($data['password'])) {
-            $updateData['password'] = Hash::make($data['password']);
-        }
-
-        if (!empty($updateData)) {
-            $this->userRepository->update($user, $updateData);
-        }
+        $this->userRepository->update($user, $updateData);
 
         return $user->fresh();
     }

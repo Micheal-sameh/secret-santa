@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\DTOs\RegisterData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\SendResetLinkRequest;
+use App\Models\User;
 use App\Services\AuthService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -19,6 +21,7 @@ class AuthController extends Controller
     public function __construct(
         private AuthService $authService
     ) {}
+
     public function showLogin(): View
     {
         return view('auth.login');
@@ -31,10 +34,7 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request): RedirectResponse
     {
-        $credentials = $request->validate([
-            'email'    => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+        $credentials = $request->only('email', 'password');
 
         $user = User::where('email', $credentials['email'])->first();
 
@@ -56,7 +56,7 @@ class AuthController extends Controller
 
     public function register(RegisterRequest $request): RedirectResponse
     {
-        $user = $this->authService->register($request->validated());
+        $user = $this->authService->register(RegisterData::fromRequest($request));
 
         Auth::login($user);
         $request->session()->regenerate();
@@ -83,9 +83,9 @@ class AuthController extends Controller
         $googleUser = Socialite::driver('google')->user();
 
         $user = $this->authService->findOrCreateGoogleUser([
-            'id' => $googleUser->id,
-            'name' => $googleUser->name,
-            'email' => $googleUser->email,
+            'id'     => $googleUser->id,
+            'name'   => $googleUser->name,
+            'email'  => $googleUser->email,
             'avatar' => $googleUser->avatar,
         ]);
 
@@ -105,7 +105,7 @@ class AuthController extends Controller
     public function sendResetLink(SendResetLinkRequest $request): RedirectResponse
     {
         try {
-            $this->authService->sendResetLink($request->email);
+            $this->authService->sendResetLink($request->validated('email'));
             return back()->with('success', 'Password reset link sent! Check your email.');
         } catch (\Exception $e) {
             return back()->withErrors(['email' => $e->getMessage()]);
@@ -119,13 +119,6 @@ class AuthController extends Controller
 
     public function resetPassword(ResetPasswordRequest $request): RedirectResponse
     {
-        $request->validate([
-            'token'                 => ['required'],
-            'email'                 => ['required', 'email'],
-            'password'              => ['required', 'min:8', 'confirmed'],
-            'password_confirmation' => ['required'],
-        ]);
-
         $status = $this->authService->resetPassword($request->validated());
 
         if ($status === \Illuminate\Support\Facades\Password::PASSWORD_RESET) {
@@ -135,3 +128,4 @@ class AuthController extends Controller
         return back()->withErrors(['email' => __($status)]);
     }
 }
+

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\DTOs\CreateInPersonGameData;
 use App\Http\Requests\StoreInPersonGameRequest;
 use App\Services\InPersonGameService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class InPersonGameController extends Controller
@@ -21,7 +21,9 @@ class InPersonGameController extends Controller
 
     public function store(StoreInPersonGameRequest $request): RedirectResponse
     {
-        $game = $this->inPersonGameService->createGame($request->validated());
+        $game = $this->inPersonGameService->createGame(
+            CreateInPersonGameData::fromRequest($request)
+        );
 
         return redirect()
             ->route('inperson.show', $game->device_token)
@@ -39,7 +41,7 @@ class InPersonGameController extends Controller
     {
         try {
             $participant = $this->inPersonGameService->revealParticipant($token, $participantId);
-            $game = $this->inPersonGameService->getGameWithParticipants($token);
+            $game        = $this->inPersonGameService->getGameWithParticipants($token);
 
             return view('inperson.reveal', compact('game', 'participant'));
         } catch (\Exception $e) {

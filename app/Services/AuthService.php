@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\DTOs\RegisterData;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Auth;
@@ -14,12 +15,12 @@ class AuthService
         private UserRepository $userRepository
     ) {}
 
-    public function register(array $data): User
+    public function register(RegisterData $data): User
     {
         return $this->userRepository->create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+            'name'     => $data->name,
+            'email'    => $data->email,
+            'password' => Hash::make($data->password),
         ]);
     }
 

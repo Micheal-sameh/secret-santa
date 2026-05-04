@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\GameStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -53,6 +54,11 @@ class Game extends Model
     public function isAssigned(): bool
     {
         return !is_null($this->assigned_at);
+    }
+
+    public function status(): GameStatus
+    {
+        return GameStatus::fromGame($this);
     }
 
     public static function generateToken(): string

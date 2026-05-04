@@ -2,11 +2,11 @@
 
 namespace App\Services;
 
+use App\DTOs\CreateGameData;
+use App\Models\Assignment;
 use App\Models\Game;
 use App\Repositories\AssignmentRepository;
 use App\Repositories\GameRepository;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Auth;
 
 class GameService
 {
@@ -18,21 +18,20 @@ class GameService
     public function getUserGames(int $userId): array
     {
         return [
-            'createdGames' => $this->gameRepository->getCreatedGames($userId),
-            'joinedGames' => $this->gameRepository->getJoinedGames($userId),
+            'createdGames'  => $this->gameRepository->getCreatedGames($userId),
+            'joinedGames'   => $this->gameRepository->getJoinedGames($userId),
             'assignedGames' => $this->gameRepository->getAssignedGames($userId),
         ];
     }
 
-    public function createGame(array $data, int $hostId): Game
+    public function createGame(CreateGameData $data, int $hostId): Game
     {
         $game = $this->gameRepository->create([
-            ...$data,
-            'host_id' => $hostId,
+            ...$data->toArray(),
+            'host_id'    => $hostId,
             'join_token' => Game::generateToken(),
         ]);
 
-        // Host auto-joins
         $this->gameRepository->attachParticipant($game, $hostId);
 
         return $game->load('host', 'participants');
@@ -87,8 +86,8 @@ class GameService
 
         foreach ($pairs as $pair) {
             $this->assignmentRepository->create([
-                'game_id' => $game->id,
-                'giver_id' => $pair['giver'],
+                'game_id'     => $game->id,
+                'giver_id'    => $pair['giver'],
                 'receiver_id' => $pair['receiver'],
             ]);
         }
@@ -103,21 +102,19 @@ class GameService
         $game = $this->gameRepository->findByToken($token)->load('participants');
 
         return [
-            'count' => $game->participants->count(),
+            'count'        => $game->participants->count(),
             'participants' => $game->participants->map(fn ($p) => [
-                'id' => $p->id,
-                'name' => $p->name,
-                'avatar' => $p->avatar,
+                'id'      => $p->id,
+                'name'    => $p->name,
+                'avatar'  => $p->avatar,
                 'is_host' => $p->id === $game->host_id,
             ]),
         ];
     }
 
-    public function getUserAssignment(int $gameId, int $userId): ?array
+    public function getUserAssignment(int $gameId, int $userId): ?Assignment
     {
-        $assignment = $this->assignmentRepository->findByGameAndGiver($gameId, $userId);
-
-        return $assignment ? $assignment->toArray() : null;
+        return $this->assignmentRepository->findByGameAndGiver($gameId, $userId);
     }
 
     /**

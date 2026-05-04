@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\DTOs\CreateGameData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreGameApiRequest;
 use App\Services\GameService;
@@ -13,6 +14,7 @@ class GameController extends Controller
     public function __construct(
         private GameService $gameService
     ) {}
+
     public function index(Request $request): JsonResponse
     {
         $games = $this->gameService->getUserGames($request->user()->id);
@@ -22,7 +24,10 @@ class GameController extends Controller
 
     public function store(StoreGameApiRequest $request): JsonResponse
     {
-        $game = $this->gameService->createGame($request->validated(), $request->user()->id);
+        $game = $this->gameService->createGame(
+            CreateGameData::fromRequest($request),
+            $request->user()->id
+        );
 
         return response()->json($game, 201);
     }
@@ -39,10 +44,7 @@ class GameController extends Controller
         try {
             $game = $this->gameService->joinGame($token, $request->user()->id);
 
-            return response()->json([
-                'message' => 'Joined successfully.',
-                'game' => $game
-            ]);
+            return response()->json(['message' => 'Joined successfully.', 'game' => $game]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 422);
         }
@@ -53,10 +55,7 @@ class GameController extends Controller
         try {
             $game = $this->gameService->assignParticipants($id, $request->user()->id);
 
-            return response()->json([
-                'message' => 'Assignments made!',
-                'game' => $game
-            ]);
+            return response()->json(['message' => 'Assignments made!', 'game' => $game]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 422);
         }

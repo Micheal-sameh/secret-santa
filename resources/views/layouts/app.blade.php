@@ -96,7 +96,7 @@
                         <span class="font-bold text-lg tracking-tight text-white">
                             Secret<span class="text-santa-gold">Santa</span>
                         </span>
-                        <span class="text-xs text-slate-400 font-medium">by Crafando</span>
+                        <span class="text-xs text-slate-400 font-medium">by {{config('company.name')}}</span>
                     </div>
                 </a>
 

@@ -3,12 +3,35 @@
 
 @section('content')
 
-<div class="flex items-center justify-between mb-6">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
     <div>
         <h2 class="text-lg font-semibold text-white">All Users</h2>
         <p class="text-slate-400 text-sm">{{ $users->total() }} total users</p>
     </div>
 </div>
+
+{{-- Filters --}}
+<form method="GET" action="{{ route('admin.users') }}" class="flex flex-wrap gap-3 mb-5">
+    <input type="text" name="search" value="{{ $filters['search'] ?? '' }}"
+           placeholder="Search name or email…"
+           class="bg-slate-800 border border-slate-700 text-slate-200 text-sm rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500/50 placeholder-slate-500 w-56">
+    <select name="role"
+            class="bg-slate-800 border border-slate-700 text-slate-200 text-sm rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500/50">
+        <option value="">All Roles</option>
+        <option value="user"  {{ ($filters['role'] ?? '') === 'user'  ? 'selected' : '' }}>User</option>
+        <option value="admin" {{ ($filters['role'] ?? '') === 'admin' ? 'selected' : '' }}>Admin</option>
+    </select>
+    <button type="submit"
+            class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-900 text-sm font-semibold transition-colors">
+        Filter
+    </button>
+    @if(array_filter($filters))
+    <a href="{{ route('admin.users') }}"
+       class="px-4 py-2 rounded-xl border border-slate-700 text-slate-400 hover:text-white text-sm transition-colors">
+        Clear
+    </a>
+    @endif
+</form>
 
 <div class="bg-slate-800/70 border border-slate-700/50 rounded-2xl overflow-hidden">
     <div class="overflow-x-auto">
@@ -17,8 +40,8 @@
                 <tr class="text-slate-400 text-left border-b border-slate-700 bg-slate-800/50">
                     <th class="px-5 py-3 font-medium">User</th>
                     <th class="px-5 py-3 font-medium">Email</th>
-                    <th class="px-5 py-3 font-medium">Hosted</th>
-                    <th class="px-5 py-3 font-medium">Joined</th>
+                    <th class="px-5 py-3 font-medium">Hosted Games</th>
+                    <th class="px-5 py-3 font-medium">Joined Games</th>
                     <th class="px-5 py-3 font-medium">Signed up</th>
                     <th class="px-5 py-3 font-medium">Role</th>
                     <th class="px-5 py-3 font-medium">Actions</th>
@@ -52,7 +75,6 @@
                     </td>
                     <td class="px-5 py-3">
                         <div class="flex items-center gap-2">
-                            {{-- Toggle Admin --}}
                             @unless($user->id === Auth::id())
                             <form method="POST" action="{{ route('admin.users.toggle-admin', $user->id) }}">
                                 @csrf
@@ -63,7 +85,6 @@
                                     {{ $user->is_admin ? 'Revoke Admin' : 'Make Admin' }}
                                 </button>
                             </form>
-                            {{-- Delete --}}
                             <form method="POST" action="{{ route('admin.users.destroy', $user->id) }}"
                                   onsubmit="return confirm('Delete {{ addslashes($user->name) }}? This cannot be undone.')">
                                 @csrf
@@ -88,7 +109,6 @@
         </table>
     </div>
 
-    {{-- Pagination --}}
     @if($users->hasPages())
     <div class="px-5 py-4 border-t border-slate-700/50">
         {{ $users->links() }}

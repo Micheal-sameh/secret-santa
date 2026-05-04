@@ -2,13 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\DTOs\UpdateProfileData;
+use App\Http\Requests\UpdateProfileRequest;
 use App\Services\ProfileService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
     public function __construct(
         private ProfileService $profileService
     ) {}
+
     public function show(): View
     {
         return view('profile.show', ['user' => Auth::user()]);
@@ -17,14 +24,13 @@ class ProfileController extends Controller
     public function update(UpdateProfileRequest $request): RedirectResponse
     {
         $user = Auth::user();
-        $data = $request->validated();
+        $data = UpdateProfileData::fromRequest($request);
 
-        // Verify current password if user has a password and wants to change it
-        if ($request->filled('password')) {
+        if ($data->password !== null) {
             if (!$user->password) {
                 return back()->withErrors(['current_password' => 'This account uses Google Sign-In and has no password set.']);
             }
-            if (!$request->filled('current_password') || !Hash::check($request->current_password, $user->password)) {
+            if ($data->currentPassword === null || !Hash::check($data->currentPassword, $user->password)) {
                 return back()->withErrors(['current_password' => 'The current password is incorrect.']);
             }
         }

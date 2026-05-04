@@ -23,16 +23,41 @@ class AdminController extends Controller
 
     public function users(Request $request): View
     {
-        $users = $this->adminService->getAllUsers(20);
+        $filters = $request->only(['search', 'role']);
+        $users   = $this->adminService->getAllUsers(20, $filters);
 
-        return view('admin.users', compact('users'));
+        return view('admin.users', compact('users', 'filters'));
     }
 
     public function games(Request $request): View
     {
-        $games = $this->adminService->getAllGames(20);
+        $filters = $request->only(['search', 'status']);
+        $games   = $this->adminService->getAllGames(20, $filters);
 
-        return view('admin.games', compact('games'));
+        return view('admin.games', compact('games', 'filters'));
+    }
+
+    public function inPersonGames(Request $request): View
+    {
+        $filters = $request->only(['search', 'status']);
+        $games   = $this->adminService->getAllInPersonGames(20, $filters);
+
+        return view('admin.inperson', compact('games', 'filters'));
+    }
+
+    public function assignments(Request $request): View
+    {
+        $filters     = $request->only(['search', 'game_id']);
+        $assignments = $this->adminService->getAllAssignments(30, $filters);
+
+        return view('admin.assignments', compact('assignments', 'filters'));
+    }
+
+    public function admins(Request $request): View
+    {
+        $admins = $this->adminService->getAllAdmins(20);
+
+        return view('admin.admins', compact('admins'));
     }
 
     public function toggleAdmin(int $userId): RedirectResponse
@@ -56,5 +81,12 @@ class AdminController extends Controller
         $this->adminService->deleteGame($gameId);
 
         return back()->with('success', 'Game deleted successfully.');
+    }
+
+    public function destroyInPersonGame(int $gameId): RedirectResponse
+    {
+        $this->adminService->deleteInPersonGame($gameId);
+
+        return back()->with('success', 'In-person game deleted successfully.');
     }
 }

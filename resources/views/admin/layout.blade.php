@@ -7,9 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #0f172a; }
-        .admin-sidebar { width: 240px; min-height: 100vh; background: rgba(15,23,42,0.95); border-right: 1px solid rgba(51,65,85,0.6); }
+        .admin-sidebar { width: 240px; min-height: 100vh; background: rgba(15,23,42,0.97); border-right: 1px solid rgba(51,65,85,0.6); }
         .admin-nav-link { display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; color: #94a3b8; transition: background 0.15s, color 0.15s; }
         .admin-nav-link:hover, .admin-nav-link.active { background: rgba(245,158,11,0.12); color: #f59e0b; }
+        .nav-section-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; color: #475569; text-transform: uppercase; padding: 0.75rem 1rem 0.25rem; }
     </style>
 </head>
 <body class="min-h-screen text-slate-200 flex">
@@ -26,18 +27,35 @@
         </a>
 
         <!-- Nav -->
-        <nav class="flex flex-col gap-1 flex-1">
+        <nav class="flex flex-col gap-0.5 flex-1">
+            <div class="nav-section-label">Overview</div>
             <a href="{{ route('admin.dashboard') }}"
                class="admin-nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                 <span>📊</span> Dashboard
             </a>
+
+            <div class="nav-section-label mt-2">People</div>
             <a href="{{ route('admin.users') }}"
                class="admin-nav-link {{ request()->routeIs('admin.users') ? 'active' : '' }}">
                 <span>👥</span> Users
             </a>
+            <a href="{{ route('admin.admins') }}"
+               class="admin-nav-link {{ request()->routeIs('admin.admins') ? 'active' : '' }}">
+                <span>🛡️</span> Admins
+            </a>
+
+            <div class="nav-section-label mt-2">Games</div>
             <a href="{{ route('admin.games') }}"
                class="admin-nav-link {{ request()->routeIs('admin.games') ? 'active' : '' }}">
                 <span>🎮</span> Online Games
+            </a>
+            <a href="{{ route('admin.inperson') }}"
+               class="admin-nav-link {{ request()->routeIs('admin.inperson') ? 'active' : '' }}">
+                <span>🎁</span> In-Person Games
+            </a>
+            <a href="{{ route('admin.assignments') }}"
+               class="admin-nav-link {{ request()->routeIs('admin.assignments') ? 'active' : '' }}">
+                <span>🎯</span> Assignments
             </a>
         </nav>
 

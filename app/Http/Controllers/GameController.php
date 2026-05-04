@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\DTOs\CreateGameData;
 use App\Http\Requests\StoreGameRequest;
-use App\Models\Assignment;
 use App\Services\GameService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -31,7 +31,10 @@ class GameController extends Controller
 
     public function store(StoreGameRequest $request): RedirectResponse
     {
-        $game = $this->gameService->createGame($request->validated(), Auth::id());
+        $game = $this->gameService->createGame(
+            CreateGameData::fromRequest($request),
+            Auth::id()
+        );
 
         return redirect()
             ->route('games.show', $game->join_token)
@@ -42,7 +45,7 @@ class GameController extends Controller
     {
         $game = $this->gameService->getGameWithDetails($token);
 
-        $user         = Auth::user();
+        $user          = Auth::user();
         $isParticipant = $user && $game->participants->contains('id', $user->id);
         $isHost        = $user && $game->host_id === $user->id;
         $myAssignment  = null;

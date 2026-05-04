@@ -56,9 +56,13 @@ Route::prefix('inperson')->name('inperson.')->group(function () {
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/users', [AdminController::class, 'users'])->name('users');
+    Route::get('/admins', [AdminController::class, 'admins'])->name('admins');
     Route::get('/games', [AdminController::class, 'games'])->name('games');
+    Route::get('/inperson', [AdminController::class, 'inPersonGames'])->name('inperson');
+    Route::get('/assignments', [AdminController::class, 'assignments'])->name('assignments');
     Route::post('/users/{userId}/toggle-admin', [AdminController::class, 'toggleAdmin'])->name('users.toggle-admin');
     Route::delete('/users/{userId}', [AdminController::class, 'destroyUser'])->name('users.destroy');
     Route::delete('/games/{gameId}', [AdminController::class, 'destroyGame'])->name('games.destroy');
+    Route::delete('/inperson/{gameId}', [AdminController::class, 'destroyInPersonGame'])->name('inperson.destroy');
 });
 

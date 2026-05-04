@@ -53,7 +53,7 @@
                     <span class="text-2xl font-bold text-white tracking-tight">
                         Secret<span class="text-amber-400">Santa</span>
                     </span>
-                    <span class="text-xs text-slate-400 font-medium">by Crafando</span>
+                    <span class="text-xs text-slate-400 font-medium">by {{config('ceompany.name')}}</span>
                 </div>
             </a>
         </div>
