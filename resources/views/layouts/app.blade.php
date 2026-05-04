@@ -114,6 +114,11 @@
                         🎁 In-Person
                     </a>
                     @auth
+                        @if(\App\Models\Setting::get('subscriptions_enabled', '1') === '1')
+                        <a href="{{ route('subscribe') }}" class="nav-link px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-700/60">
+                            💳 Plans
+                        </a>
+                        @endif
                         @if(Auth::user()->isAdmin())
                         <a href="{{ route('admin.dashboard') }}" class="nav-link px-3 py-2 rounded-lg text-sm text-amber-400 hover:bg-amber-500/10 font-medium">
                             ⚙️ Admin

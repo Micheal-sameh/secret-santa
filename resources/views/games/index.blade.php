@@ -5,6 +5,27 @@
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
+    {{-- Subscription banner --}}
+    @if(\App\Models\Setting::get('subscriptions_enabled', '1') === '1')
+        @php $activeSub = Auth::user()->activeSubscription; @endphp
+        @if($activeSub)
+        <div class="mb-6 px-5 py-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex flex-wrap items-center gap-3">
+            <span class="text-emerald-400 text-lg">✓</span>
+            <div class="flex-1">
+                <span class="text-emerald-200 font-semibold text-sm">{{ $activeSub->plan->name }} Plan</span>
+                <span class="text-emerald-400/70 text-xs ml-2">active until {{ $activeSub->ends_at->format('M d, Y') }}</span>
+            </div>
+            <a href="{{ route('subscribe') }}" class="text-xs text-emerald-400 hover:text-emerald-200 transition-colors">Manage →</a>
+        </div>
+        @else
+        <div class="mb-6 px-5 py-3.5 rounded-2xl bg-amber-500/5 border border-amber-500/20 flex flex-wrap items-center gap-3">
+            <span class="text-amber-400 text-lg">💳</span>
+            <p class="flex-1 text-amber-200/80 text-sm">Unlock larger games with a subscription plan.</p>
+            <a href="{{ route('subscribe') }}" class="text-xs px-4 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold transition-colors">View Plans</a>
+        </div>
+        @endif
+    @endif
+
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10">
         <div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Setting;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,7 +15,10 @@ class StoreInPersonGameRequest extends FormRequest
 
     public function rules(): array
     {
-        $maxParticipants = Auth::check() ? 100 : 5;
+        $loginRequiredAfter = (int) Setting::get('inperson_login_required_after', 5);
+
+        // If guest and count > loginRequiredAfter, cap at loginRequiredAfter
+        $maxParticipants = Auth::check() ? 9999 : $loginRequiredAfter;
 
         return [
             'name'           => ['required', 'string', 'max:255'],
@@ -26,9 +30,11 @@ class StoreInPersonGameRequest extends FormRequest
 
     public function messages(): array
     {
+        $loginRequiredAfter = (int) Setting::get('inperson_login_required_after', 5);
+
         return [
-            'participants.min'   => 'You need at least 3 participants to play.',
-            'participants.max'   => 'Guest users can only have up to 5 participants. Please log in to add more.',
+            'participants.min'        => 'You need at least 3 participants to play.',
+            'participants.max'        => "Please log in to add more than {$loginRequiredAfter} participants.",
             'participants.*.distinct' => 'All participant names must be unique.',
         ];
     }

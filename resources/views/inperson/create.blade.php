@@ -89,7 +89,7 @@
         <div class="text-5xl mb-4">🔒</div>
         <h2 class="text-xl font-bold text-white mb-2">Login Required</h2>
         <p class="text-slate-400 text-sm mb-6">
-            No login games are limited to <span class="text-amber-400 font-semibold">5 participants</span>.<br>
+            No login games are limited to <span class="text-amber-400 font-semibold">{{ $loginRequiredAfter }} participants</span>.<br>
             Login to enjoy full features with unlimited participants!
         </p>
         <div class="flex flex-col gap-3">
@@ -114,7 +114,7 @@
 @push('scripts')
 <script>
 const MIN_PARTICIPANTS = 3;
-const MAX_PARTICIPANTS_GUEST = 5;
+const MAX_PARTICIPANTS_GUEST = {{ $loginRequiredAfter }};
 const IS_AUTHENTICATED = {{ auth()->check() ? 'true' : 'false' }};
 let count = 0;
 

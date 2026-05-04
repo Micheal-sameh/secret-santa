@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DTOs\CreateGameData;
 use App\Http\Requests\StoreGameRequest;
 use App\Services\GameService;
+use App\Services\SubscriptionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,7 +15,8 @@ use Illuminate\View\View;
 class GameController extends Controller
 {
     public function __construct(
-        private GameService $gameService
+        private GameService          $gameService,
+        private SubscriptionService  $subscriptionService,
     ) {}
 
     public function index(): View
@@ -26,14 +28,24 @@ class GameController extends Controller
 
     public function create(): View
     {
-        return view('games.create');
+        $freeLimit = $this->subscriptionService->onlineGameFreeLimit();
+        $subscriptionsEnabled = $this->subscriptionService->subscriptionsEnabled();
+
+        return view('games.create', compact('freeLimit', 'subscriptionsEnabled'));
     }
 
     public function store(StoreGameRequest $request): RedirectResponse
     {
+        $user = Auth::user();
+
+        // Subscription check: we don't know participant count at creation time;
+        // the limit applies when others JOIN. We check at assign time instead.
+        // However, we still enforce for the feature where >limit means subscribe.
+        // The actual participant limit check happens at join via game capacity.
+
         $game = $this->gameService->createGame(
             CreateGameData::fromRequest($request),
-            Auth::id()
+            $user->id
         );
 
         return redirect()
@@ -60,6 +72,16 @@ class GameController extends Controller
     public function join(Request $request, string $token): RedirectResponse
     {
         try {
+            $game = $this->gameService->getGameWithDetails($token);
+
+            // Check subscription limit: does host have subscription for this size?
+            $currentCount = $game->participants->count();
+            $host = $game->host;
+            if ($host && !$this->subscriptionService->userCanHostOnlineGame($host, $currentCount + 1)) {
+                $limit = $this->subscriptionService->onlineGameFreeLimit();
+                return back()->with('error', "This game has reached the free limit of {$limit} participants. The host needs a subscription to allow more.");
+            }
+
             $this->gameService->joinGame($token, Auth::id());
 
             return redirect()

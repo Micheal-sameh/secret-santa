@@ -5,25 +5,40 @@ namespace App\Http\Controllers;
 use App\DTOs\CreateInPersonGameData;
 use App\Http\Requests\StoreInPersonGameRequest;
 use App\Services\InPersonGameService;
+use App\Services\SubscriptionService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class InPersonGameController extends Controller
 {
     public function __construct(
-        private InPersonGameService $inPersonGameService
+        private InPersonGameService  $inPersonGameService,
+        private SubscriptionService  $subscriptionService,
     ) {}
 
     public function create(): View
     {
-        return view('inperson.create');
+        $freeLimit             = $this->subscriptionService->inPersonGameFreeLimit();
+        $loginRequiredAfter    = $this->subscriptionService->inPersonLoginRequiredAfter();
+        $subscriptionsEnabled  = $this->subscriptionService->subscriptionsEnabled();
+
+        return view('inperson.create', compact('freeLimit', 'loginRequiredAfter', 'subscriptionsEnabled'));
     }
 
     public function store(StoreInPersonGameRequest $request): RedirectResponse
     {
-        $game = $this->inPersonGameService->createGame(
-            CreateInPersonGameData::fromRequest($request)
-        );
+        $dto  = CreateInPersonGameData::fromRequest($request);
+        $user = Auth::user();
+
+        if (!$this->subscriptionService->canCreateInPersonGame($user, count($dto->participantNames))) {
+            $limit = $this->subscriptionService->inPersonGameFreeLimit();
+            return back()
+                ->withInput()
+                ->with('error', "In-person games with more than {$limit} participants require a subscription.");
+        }
+
+        $game = $this->inPersonGameService->createGame($dto);
 
         return redirect()
             ->route('inperson.show', $game->device_token)

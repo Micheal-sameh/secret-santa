@@ -2,9 +2,12 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\PlanController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\InPersonGameController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 
 // ── Welcome ──────────────────────────────────────────────────────────────────
@@ -42,6 +45,10 @@ Route::middleware('auth')->group(function () {
     // Profile
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    // Subscriptions
+    Route::get('/subscribe', [SubscriptionController::class, 'index'])->name('subscribe');
+    Route::post('/subscribe', [SubscriptionController::class, 'subscribe'])->name('subscribe.store');
 });
 
 // ── In-Person (no auth required) ─────────────────────────────────────────────
@@ -64,5 +71,17 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::delete('/users/{userId}', [AdminController::class, 'destroyUser'])->name('users.destroy');
     Route::delete('/games/{gameId}', [AdminController::class, 'destroyGame'])->name('games.destroy');
     Route::delete('/inperson/{gameId}', [AdminController::class, 'destroyInPersonGame'])->name('inperson.destroy');
+
+    // Plans
+    Route::get('/plans', [PlanController::class, 'index'])->name('plans.index');
+    Route::get('/plans/create', [PlanController::class, 'create'])->name('plans.create');
+    Route::post('/plans', [PlanController::class, 'store'])->name('plans.store');
+    Route::get('/plans/{plan}/edit', [PlanController::class, 'edit'])->name('plans.edit');
+    Route::put('/plans/{plan}', [PlanController::class, 'update'])->name('plans.update');
+    Route::delete('/plans/{plan}', [PlanController::class, 'destroy'])->name('plans.destroy');
+
+    // Settings
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings');
+    Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
 });
 

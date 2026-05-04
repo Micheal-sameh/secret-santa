@@ -57,6 +57,18 @@
                class="admin-nav-link {{ request()->routeIs('admin.assignments') ? 'active' : '' }}">
                 <span>🎯</span> Assignments
             </a>
+
+            <div class="nav-section-label mt-2">Billing</div>
+            <a href="{{ route('admin.plans.index') }}"
+               class="admin-nav-link {{ request()->routeIs('admin.plans.*') ? 'active' : '' }}">
+                <span>💳</span> Plans
+            </a>
+
+            <div class="nav-section-label mt-2">System</div>
+            <a href="{{ route('admin.settings') }}"
+               class="admin-nav-link {{ request()->routeIs('admin.settings') ? 'active' : '' }}">
+                <span>⚙️</span> Settings
+            </a>
         </nav>
 
         <!-- Bottom links -->
