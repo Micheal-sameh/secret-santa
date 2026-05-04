@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin — @yield('title', 'Dashboard') | Secret Santa</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #0f172a; }
         .admin-sidebar { width: 240px; min-height: 100vh; background: rgba(15,23,42,0.95); border-right: 1px solid rgba(51,65,85,0.6); }

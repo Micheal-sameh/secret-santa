@@ -1,18 +1,5 @@
 # ─────────────────────────────────────────
-# Stage 1: Build frontend assets
-# ─────────────────────────────────────────
-FROM node:20-alpine AS assets
-
-WORKDIR /app
-
-COPY package.json package-lock.json ./
-RUN npm ci
-
-COPY . .
-RUN npm run build
-
-# ─────────────────────────────────────────
-# Stage 2: PHP-FPM application image
+# PHP-FPM application image
 # ─────────────────────────────────────────
 FROM php:8.2-fpm-alpine AS app
 
@@ -40,9 +27,6 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction --no-script
 
 # Copy application source
 COPY --chown=www-data:www-data . .
-
-# Copy compiled assets from Stage 1
-COPY --from=assets --chown=www-data:www-data /app/public/build ./public/build
 
 # Run post-install scripts (package:discover, etc.)
 RUN composer run-script post-autoload-dump
