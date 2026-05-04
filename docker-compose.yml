@@ -1,21 +1,39 @@
 version: '3.8'
 
 services:
+
+  # ── PHP-FPM application ───────────────────────────────────────
   app:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "1500:80"
+      target: app
+    env_file: .env
+    environment:
+      DB_HOST: mysql
     volumes:
-      - .:/var/www/html
-      - /var/www/html/vendor
-      - /var/www/html/node_modules
+      - storage_data:/var/www/html/storage
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     networks:
       - santa
 
+  # ── Nginx web server ──────────────────────────────────────────
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    ports:
+      - "1500:80"
+    volumes:
+      - storage_data:/var/www/html/storage:ro
+    depends_on:
+      - app
+    networks:
+      - santa
+
+  # ── MySQL database ────────────────────────────────────────────
   mysql:
     image: mysql:8.0
     environment:
@@ -27,11 +45,32 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "santa", "-psanta123"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - santa
+
+  # ── phpMyAdmin ────────────────────────────────────────────────
+  phpmyadmin:
+    image: phpmyadmin:latest
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: santa
+      PMA_PASSWORD: santa123
+    depends_on:
+      mysql:
+        condition: service_healthy
     networks:
       - santa
 
 volumes:
   mysql_data:
+  storage_data:
 
 networks:
   santa:

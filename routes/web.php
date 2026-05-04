@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\InPersonGameController;
 use App\Http\Controllers\ProfileController;
@@ -49,5 +50,15 @@ Route::prefix('inperson')->name('inperson.')->group(function () {
     Route::post('/', [InPersonGameController::class, 'store'])->name('store');
     Route::get('/{token}', [InPersonGameController::class, 'show'])->name('show');
     Route::post('/{token}/reveal/{participantId}', [InPersonGameController::class, 'reveal'])->name('reveal');
+});
+
+// ── Admin ─────────────────────────────────────────────────────────────────────
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/users', [AdminController::class, 'users'])->name('users');
+    Route::get('/games', [AdminController::class, 'games'])->name('games');
+    Route::post('/users/{userId}/toggle-admin', [AdminController::class, 'toggleAdmin'])->name('users.toggle-admin');
+    Route::delete('/users/{userId}', [AdminController::class, 'destroyUser'])->name('users.destroy');
+    Route::delete('/games/{gameId}', [AdminController::class, 'destroyGame'])->name('games.destroy');
 });
 

@@ -19,6 +19,7 @@ class User extends Authenticatable
         'password',
         'google_id',
         'avatar',
+        'is_admin',
     ];
 
     /**
@@ -39,7 +40,13 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'is_admin' => 'boolean',
     ];
+
+    public function isAdmin(): bool
+    {
+        return (bool) $this->is_admin;
+    }
 
     public function hostedGames(): HasMany
     {

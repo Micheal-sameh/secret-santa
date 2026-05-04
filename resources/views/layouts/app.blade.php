@@ -113,6 +113,13 @@
                     <a href="{{ route('inperson.create') }}" class="nav-link px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-700/60">
                         🎁 In-Person
                     </a>
+                    @auth
+                        @if(Auth::user()->isAdmin())
+                        <a href="{{ route('admin.dashboard') }}" class="nav-link px-3 py-2 rounded-lg text-sm text-amber-400 hover:bg-amber-500/10 font-medium">
+                            ⚙️ Admin
+                        </a>
+                        @endif
+                    @endauth
                 </div>
 
                 <!-- User menu -->
@@ -177,6 +184,13 @@
             <a href="{{ route('inperson.create') }}" class="block px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-700 text-sm">
                 🎁 In-Person Game
             </a>
+            @auth
+                @if(Auth::user()->isAdmin())
+                <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2 rounded-lg text-amber-400 hover:bg-amber-500/10 text-sm font-medium">
+                    ⚙️ Admin Panel
+                </a>
+                @endif
+            @endauth
         </div>
     </nav>
 
