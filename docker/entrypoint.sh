@@ -8,6 +8,12 @@ until php -r "new PDO('mysql:host=${DB_HOST};port=${DB_PORT};dbname=${DB_DATABAS
 done
 echo "MySQL is ready."
 
+# Ensure storage directory structure exists (volume mount may be empty)
+mkdir -p /var/www/html/storage/framework/{sessions,views,cache/data}
+mkdir -p /var/www/html/storage/app/public
+mkdir -p /var/www/html/storage/logs
+mkdir -p /var/www/html/bootstrap/cache
+
 # Cache configuration
 php artisan config:clear
 php artisan config:cache
@@ -17,7 +23,8 @@ php artisan migrate --force
 
 # Cache routes and views
 php artisan route:cache
-php artisan view:cache
+mkdir -p /var/www/html/storage/framework/views
+php artisan view:cache || true
 
 # Fix storage permissions
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
